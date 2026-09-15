@@ -18,6 +18,10 @@ Una consola de audio interactiva premium basada en entornos web, diseñada con u
 *   CSS3 (Variables nativas, Flexbox, CSS Grid avanzado, Gradientes radiales, Neumorfismo)
 *   JavaScript Vanilla (ES6+, Captura de deltas de movimiento para simulación mecánica, Renderizado dinámico de Canvas)
 
+## 📁 Nota sobre los archivos HTML
+*   **`Consola_Audio_0.2.html`** — Archivo principal para trabajar localmente. Contiene la consola completa con estilos neumórficos, 10 bandas del ecualizador, potenciómetros dinámicos y toda la lógica de interacción. Este es el archivo que debes abrir en tu servidor local (Live Server, XAMPP, etc.).
+*   **`index.html`** — Copia duplicada de `Consola_Audio_0.2.html` colocada en la raíz exclusivamente para que GitHub Pages lo reconozca como página de inicio del repositorio y permita la reproducción web en el servidor de GitHub. **No se recomienda usar este archivo para desarrollo local.**
+
 ## 🚀 Instalación y Uso Local
 Debido a las políticas estrictas de seguridad de origen de los navegadores modernos (`CORS` para direcciones `file:///`), este proyecto requiere ejecutarse en un entorno de servidor web local para su correcto funcionamiento.
 

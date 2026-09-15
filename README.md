@@ -2,9 +2,9 @@
 
 Una consola de audio interactiva premium basada en entornos web, diseñada con una estética **Dark Neumorphism / Studio LED**. El proyecto sirve como una herramienta didáctica y visual de percepción auditiva, permitiendo a los usuarios entender cómo impacta la modificación de frecuencias y efectos en los instrumentos reales y en el confort del oído.
 
-![Licencia](https://shields.io)
-![Estado](https://shields.io)
-![IA](https://shields.io)
+![Licencia](https://img.shields.io/github/license/jimmynorman/mapa-interactivo-audio-fxsound?style=flat-square)
+![Estado](https://img.shields.io/github/last-commit/jimmynorman/mapa-interactivo-audio-fxsound?style=flat-square)
+![Idioma](https://img.shields.io/github/languages/top/jimmynorman/mapa-interactivo-audio-fxsound?style=flat-square)
 
 ## 🌟 Características Destacadas
 *   **Diseño de Rack de Estudio:** Interfaz asimétrica balanceada con esquemas de color LED por bloques acústicos.

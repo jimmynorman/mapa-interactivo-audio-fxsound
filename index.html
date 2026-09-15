@@ -19,14 +19,14 @@
             --amarillo: #ffd60a;
             --azul: #64d2ff;
         }
-    
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
         }
-    
+
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
@@ -37,7 +37,7 @@
             min-height: 100vh;
             background-image: radial-gradient(circle at top, #1a1a24 0%, var(--bg-color) 70%);
         }
-    
+
         .container {
             width: 100%;
             max-width: 1000px;
@@ -47,14 +47,14 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
-    
+
         header {
             text-align: center;
             margin-bottom: 30px;
             border-bottom: 1px solid rgba(255,255,255,0.06);
             padding-bottom: 20px;
         }
-    
+
         header h1 {
             font-size: 28px;
             font-weight: 700;
@@ -63,25 +63,25 @@
             margin-bottom: 6px;
             text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
-    
+
         header p {
             color: var(--text-muted);
             font-size: 14px;
             letter-spacing: 0.2px;
         }
-    
+
         .interface {
             display: grid;
             grid-template-columns: 1fr;
             gap: 30px;
         }
-    
+
         @media (min-width: 768px) {
             .interface {
                 grid-template-columns: 340px 1fr;
             }
         }
-    
+
         /* Panel Izquierdo con Flexbox para empujar la ayuda al fondo */
         .panel-efectos {
             background: var(--panel-bg);
@@ -92,7 +92,7 @@
             flex-direction: column;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
-    
+
         .panel-efectos h2, .panel-eq h2 {
             font-size: 13px;
             font-weight: 700;
@@ -104,7 +104,7 @@
             align-items: center;
             gap: 8px;
         }
-    
+
         .panel-efectos h2::before {
             content: '';
             display: inline-block;
@@ -114,7 +114,7 @@
             border-radius: 2px;
             box-shadow: 0 0 8px var(--primary);
         }
-    
+
         /* Panel Derecho con Flexbox idéntico para simetría perfecta */
         .panel-eq {
             background: var(--panel-bg);
@@ -125,11 +125,11 @@
             flex-direction: column;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
-    
+
         .control-grupo {
             margin-bottom: 22px;
         }
-    
+
         .control-header {
             display: flex;
             justify-content: space-between;
@@ -138,13 +138,13 @@
             font-weight: 500;
             color: #e5e5ea;
         }
-    
+
         .slider-wrapper {
             display: flex;
             align-items: center;
             gap: 12px;
         }
-    
+
         .slider-wrapper input[type="range"] {
             flex: 1;
             accent-color: var(--primary);
@@ -153,7 +153,7 @@
             border-radius: 3px;
             background: #2c2c35;
         }
-    
+
         .valor-num {
             font-size: 12px;
             font-weight: 600;
@@ -166,7 +166,7 @@
             border: 1px solid rgba(255,255,255,0.05);
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
         }
-    
+
         /* Panel Derecho - Ecualizador */
         .panel-eq {
             background: var(--panel-bg);
@@ -177,7 +177,7 @@
             flex-direction: column;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
-    
+
         .eq-bars-container {
             display: flex;
             justify-content: space-between;
@@ -190,7 +190,7 @@
             border: 1px solid rgba(255,255,255,0.02);
             box-shadow: inset 0 4px 15px rgba(0,0,0,0.8);
         }
-    
+
         .eq-columna {
             flex: 1;
             display: flex;
@@ -199,7 +199,7 @@
             position: relative;
             z-index: 2;
         }
-    
+
         .linea-cero {
             position: absolute;
             top: 50%;
@@ -211,7 +211,7 @@
             pointer-events: none;
             z-index: 1;
         }
-    
+
         /* Custom Faders de Estudio */
         .eq-slider {
             height: 160px;
@@ -223,7 +223,7 @@
             appearance: none;
             width: 24px;
         }
-    
+
         /* Estilo del riel del fader */
         .eq-slider::-webkit-slider-runnable-track {
             width: 6px;
@@ -231,7 +231,7 @@
             border-radius: 3px;
             border: 1px solid rgba(0,0,0,0.5);
         }
-    
+
         /* Estilo del botón (Thumb) */
         .eq-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
@@ -246,12 +246,12 @@
             border: 1px solid #1c1c1c;
             transition: transform 0.1s ease, background-color 0.2s;
         }
-    
+
         .eq-slider:active::-webkit-slider-thumb {
             transform: scale(1.15);
             background: #ffffff;
         }
-    
+
         .eq-label {
             font-size: 11px;
             font-weight: 600;
@@ -260,28 +260,28 @@
             opacity: 0.8;
             transition: opacity 0.2s, transform 0.2s;
         }
-    
+
         .eq-columna:hover .eq-label {
             opacity: 1;
             transform: translateY(1px);
         }
-    
+
         /* Colores Dinámicos con Efecto LED */
         .bloque-rojo { color: var(--rojo); }
         .bloque-naranja { color: var(--naranja); }
         .bloque-amarillo { color: var(--amarillo); }
         .bloque-azul { color: var(--azul); }
-    
+
         .eq-slider.bloque-rojo::-webkit-slider-runnable-track { background: linear-gradient(to top, #3a1515, var(--rojo)); }
         .eq-slider.bloque-naranja::-webkit-slider-runnable-track { background: linear-gradient(to top, #3a2415, var(--naranja)); }
         .eq-slider.bloque-amarillo::-webkit-slider-runnable-track { background: linear-gradient(to top, #3a3515, var(--amarillo)); }
         .eq-slider.bloque-azul::-webkit-slider-runnable-track { background: linear-gradient(to top, #152f3a, var(--azul)); }
-    
+
         .eq-slider.bloque-rojo::-webkit-slider-thumb { background: var(--rojo); box-shadow: 0 0 10px rgba(255,69,58,0.4); }
         .eq-slider.bloque-naranja::-webkit-slider-thumb { background: var(--naranja); box-shadow: 0 0 10px rgba(255,159,10,0.4); }
         .eq-slider.bloque-amarillo::-webkit-slider-thumb { background: var(--amarillo); box-shadow: 0 0 10px rgba(255,214,10,0.4); }
         .eq-slider.bloque-azul::-webkit-slider-thumb { background: var(--azul); box-shadow: 0 0 10px rgba(100,210,255,0.4); }
-    
+
         /* Pantalla de Percepción Dinámica (Estilo Pantalla OLED) */
         .pantalla-ayuda {
             background: #070709;
@@ -296,7 +296,7 @@
             box-shadow: inset 0 2px 8px rgba(0,0,0,0.9), 0 4px 15px rgba(0,0,0,0.4);
             transition: border-color 0.3s ease;
         }
-    
+
         .pantalla-ayuda h3 {
             font-size: 11px;
             font-weight: 700;
@@ -305,20 +305,20 @@
             margin-bottom: 8px;
             letter-spacing: 1px;
         }
-    
+
         .pantalla-ayuda h4 {
             font-size: 15px;
             font-weight: 600;
             margin-bottom: 6px;
             color: #ffffff;
         }
-    
+
         .pantalla-ayuda p {
             font-size: 14px;
             line-height: 1.5;
             color: #d1d1d6;
         }
-    
+
         .destaque {
             font-weight: 600;
             color: #ffffff;
@@ -335,7 +335,7 @@
             opacity: 0.6;
             letter-spacing: -0.2px;
         }
-    
+
         /* Línea indicadora superior por bloque (Reconocimiento visual rápido) */
         .eq-columna::before {
             content: '';
@@ -350,7 +350,7 @@
         .eq-columna:hover::before {
             opacity: 1;
         }
-    
+
         /* Colores de las barras de agrupación rápidas */
         .eq-columna:has(.bloque-rojo)::before { background: var(--rojo); box-shadow: 0 0 6px var(--rojo); }
         .eq-columna:has(.bloque-naranja)::before { background: var(--naranja); box-shadow: 0 0 6px var(--naranja); }
@@ -364,7 +364,7 @@
             margin-bottom: 12px;
             text-align: center;
         }
-    
+
         .cabecera-bloque {
             display: flex;
             flex-direction: column;
@@ -374,7 +374,7 @@
             border: 1px solid rgba(255, 255, 255, 0.04);
             box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
         }
-    
+
         .titulo-bloque {
             font-size: 11px;
             font-weight: 700;
@@ -382,19 +382,19 @@
             letter-spacing: 0.3px;
             margin-bottom: 3px;
         }
-    
+
         .iconos-bloque {
             font-size: 10px;
             color: var(--text-muted);
             font-weight: 500;
         }
-    
+
         /* Colores temáticos suaves para los bordes superiores de identificación rápida */
         .cabecera-bloque.b-rojo { border-top: 3px solid var(--rojo); color: var(--rojo); }
         .cabecera-bloque.b-naranja { border-top: 3px solid var(--naranja); color: var(--naranja); }
         .cabecera-bloque.b-amarillo { border-top: 3px solid var(--amarillo); color: var(--amarillo); }
         .cabecera-bloque.b-azul { border-top: 3px solid var(--azul); color: var(--azul); }
-    
+
      /* Pantallas OLED niveladas en la base horizontal */
         .pantalla-ayuda-mini {
             background: #070709;
@@ -412,14 +412,14 @@
             margin-top: auto; 
             padding-top: 15px;
         }
-    
+
         .pantalla-ayuda-mini h4 {
             font-size: 14px;
             font-weight: 600;
             margin-bottom: 6px;
             color: #ffffff;
         }
-    
+
         .pantalla-ayuda-mini p {
             font-size: 13px;
             line-height: 1.45;
@@ -432,7 +432,7 @@
             gap: 20px;
             margin-top: 15px;
         }
-    
+
         /* En el caso de que quieras dejar el último centrado si son 5 */
         .control-grupo-knob {
             display: flex;
@@ -444,21 +444,21 @@
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.02);
         }
-    
+
         .control-grupo-knob:nth-child(5) {
             grid-column: span 2; /* El refuerzo de graves abarcará el ancho completo centrado */
             max-width: 140px;
             margin: 0 auto;
             width: 100%;
         }
-    
+
         .knob-label {
             font-size: 12px;
             font-weight: 600;
             color: #e5e5ea;
             margin-bottom: 8px;
         }
-    
+
                 /* Diseño en fila vertical ultra ordenada estilo canal de consola */
         .efectos-knobs-vertical {
             display: flex;
@@ -466,7 +466,7 @@
             gap: 16px;
             margin-top: 15px;
         }
-    
+
         .control-grupo-knob-compacto {
             display: flex;
             align-items: center;
@@ -477,21 +477,21 @@
             border: 1px solid rgba(255, 255, 255, 0.02);
             height: 52px; /* Altura fija para control de espacio */
         }
-    
+
         .knob-wrapper-izq {
             display: flex;
             align-items: center;
             gap: 14px;
             flex: 1;
         }
-    
+
         .knob-label-compacto {
             font-size: 13px;
             font-weight: 600;
             color: #e5e5ea;
             letter-spacing: -0.1px;
         }
-    
+
         /* Perilla física miniatura de alta precisión */
         .knob-container-mini {
             position: relative;
@@ -506,11 +506,11 @@
             will-change: transform;
             flex-shrink: 0;
         }
-    
+
         .knob-container-mini:active {
             border-color: var(--primary);
         }
-    
+
         /* Indicador lineal interno ultra fino */
         .knob-pointer-mini {
             position: absolute;
@@ -523,7 +523,7 @@
             border-radius: 1px;
             box-shadow: 0 0 6px var(--primary);
         }
-    
+
         /* Indicador de número flotante a la derecha */
         .knob-value-derecha {
             font-size: 11px;
@@ -537,8 +537,8 @@
             border: 1px solid rgba(255,255,255,0.03);
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
         }
-    
-    
+
+
     </style>
     
 </head>
@@ -672,4 +672,228 @@
                     <div class="eq-label bloque-naranja">125 Hz</div>
                 </div>
                 <div class="eq-columna">
-                    <div class="eq-db-val" id="db-250Hz">0 dB</div
+                    <div class="eq-db-val" id="db-250Hz">0 dB</div>
+                    <input type="range" class="eq-slider bloque-naranja" min="-12" max="12" value="0" step="1" oninput="actualizarEQ('250 Hz', this.value, 'naranja')">
+                    <div class="eq-label bloque-naranja">250 Hz</div>
+                </div>
+                <div class="eq-columna">
+                    <div class="eq-db-val" id="db-500Hz">0 dB</div>
+                    <input type="range" class="eq-slider bloque-naranja" min="-12" max="12" value="0" step="1" oninput="actualizarEQ('500 Hz', this.value, 'naranja')">
+                    <div class="eq-label bloque-naranja">500 Hz</div>
+                </div>
+                
+                <!-- Bloque Amarillo (Voz y Presencia) -->
+                <div class="eq-columna">
+                    <div class="eq-db-val" id="db-1.00kHz">0 dB</div>
+                    <input type="range" class="eq-slider bloque-amarillo" min="-12" max="12" value="0" step="1" oninput="actualizarEQ('1.00 kHz', this.value, 'amarillo')">
+                    <div class="eq-label bloque-amarillo">1.00 k</div>
+                </div>
+                <div class="eq-columna">
+                    <div class="eq-db-val" id="db-2.00kHz">0 dB</div>
+                    <input type="range" class="eq-slider bloque-amarillo" min="-12" max="12" value="0" step="1" oninput="actualizarEQ('2.00 kHz', this.value, 'amarillo')">
+                    <div class="eq-label bloque-amarillo">2.00 k</div>
+                </div>
+                <div class="eq-columna">
+                    <div class="eq-db-val" id="db-4.02kHz">0 dB</div>
+                    <input type="range" class="eq-slider bloque-amarillo" min="-12" max="12" value="0" step="1" oninput="actualizarEQ('4.02 kHz', this.value, 'amarillo')">
+                    <div class="eq-label bloque-amarillo">4.02 k</div>
+                </div>
+                
+                <!-- Bloque Azul (Platillos y Brillo) -->
+                <div class="eq-columna">
+                    <div class="eq-db-val" id="db-8.00kHz">0 dB</div>
+                    <input type="range" class="eq-slider bloque-azul" min="-12" max="12" value="0" step="1" oninput="actualizarEQ('8.00 kHz', this.value, 'azul')">
+                    <div class="eq-label bloque-azul">8.00 k</div>
+                </div>
+                <div class="eq-columna">
+                    <div class="eq-db-val" id="db-16.00kHz">0 dB</div>
+                    <input type="range" class="eq-slider bloque-azul" min="-12" max="12" value="0" step="1" oninput="actualizarEQ('16.00 kHz', this.value, 'azul')">
+                    <div class="eq-label bloque-azul">16.00 k</div>
+                </div>
+            </div>
+    
+		<!-- Sección de la Pantalla de Ayuda -->
+        
+		<!-- Pantalla Exclusiva para el Ecualizador -->
+            <div id="pantalla-eq" class="pantalla-ayuda-mini">
+                <h4 id="eq-titulo">Ecualizador en neutro</h4>
+                <p id="eq-texto">Modifica una frecuencia para descubrir qué instrumentos alteras y cómo cambia lo que escuchas.</p>
+            </div>
+		</div> 
+    </div>
+
+   <!-- SECCIÓN JAVASCRIPT COMPLETAMENTE CORREGIDA -->
+<script>
+    const datosEfectos = {
+        claridad: {
+            titulo: "🎛️ Claridad",
+            subir: "Resalta los detalles de las voces para que se entiendan mucho mejor. ¡Ojo! Si lo subes demasiado, aumentará drásticamente el molesto siseo 'ssss' cuando la gente hable.",
+            bajar: "El sonido se volverá más opaco, oscuro o apagado, ocultando los detalles vocales."
+        },
+        ambiente: {
+            titulo: "🎛️ Ambiente",
+            subir: "Simula un espacio gigante o estadio. Es perfecto para conciertos en vivo porque te da la sensación de estar físicamente en medio de la multitud.",
+            bajar: "El sonido se vuelve más seco, directo y cerrado, eliminando el eco del público."
+        },
+        envolvente: {
+            titulo: "🎛️ Sonido Envolvente",
+            subir: "Separa los instrumentos de izquierda a derecha. Genera un efecto 3D espacial ideal para tus audífonos WI-C100.",
+            bajar: "El sonido se concentra al centro, perdiendo la sensación tridimensional de espacio."
+        },
+        dinamico: {
+            titulo: "🎛️ Refuerzo Dinámico",
+            subir: "Le da un empujón de volumen general y pegada ('punch') a todo el conjunto. Evita que la música suene débil o plana.",
+            bajar: "El volumen general decae y el sonido pierde fuerza de impacto."
+        },
+        graves: {
+            titulo: "🎛️ Refuerzo de Graves",
+            subir: "Aumenta la fuerza del bajo eléctrico y subbajos. Peligro en metal: si lo subes más de 3 o 4, creará un 'bum bum' exagerado que tapará las guitarras.",
+            bajar: "Quita el exceso de retumbo. Ideal para limpiar el sonido cuando hay baterías ultra rápidas."
+        }
+    };
+
+    const datosBloques = {
+        rojo: {
+            nombre: "🟥 Bloque Rojo (El Retumbo: 31Hz - 62Hz)",
+            subir: "Aumentará el bombo profundo de la batería y el aire pesado. Hará vibrar tus oídos.",
+            bajar: "Elimina el agobiante 'bum bum bum'. Limpia el ruido excesivo si la batería va muy rápido."
+        },
+        naranja: {
+            nombre: "🟧 Bloque Naranja (Cuerpo del Rock: 125Hz - 500Hz)",
+            subir: "Le da grosor y calidez a las guitarras rítmicas y cuerpo a las voces masculinas. Evita que suene delgado.",
+            bajar: "La música se escuchará flaca, delgada, vacía o como saliendo de un teléfono viejo."
+        },
+        amarillo: {
+            nombre: "🟨 Bloque Amarillo (Voz y Presencia: 1.00kHz - 4.02kHz)",
+            subir: "Trae al cantante al frente del escenario. ¡Atención! En los 2.00 kHz vive el siseo hablado; si lo subes, las letras S y T sonarán chillonas.",
+            bajar: "Suaviza la sibilancia. Al bajar los 2.00 kHz eliminas por completo el molesto silbido 'ssss' al hablar."
+        },
+        azul: {
+            nombre: "🟦 Bloque Azul (Platillos y Brillo: 8.00kHz - 16.00kHz)",
+            subir: "Añade un brillo métallique muy fino a los platillos de la batería y sensación de aire libre.",
+            bajar: "Descansa tu oído si los platillos de metal te cansan o te resultan demasiado chillones."
+        }
+    };
+
+    function actualizarEfecto(id, valor) {
+        const elementoValor = document.getElementById(`val-${id}`);
+        if (elementoValor) elementoValor.innerText = valor;
+        
+        const info = datosEfectos[id];
+        const pantalla = document.getElementById('pantalla-efectos');
+        if (!pantalla) return;
+        
+        pantalla.style.borderColor = "var(--primary)";
+        document.getElementById('efectos-titulo').innerText = `${info.titulo} (Nivel: ${valor})`;
+        
+        if (valor > 5) {
+            document.getElementById('efectos-texto').innerHTML = info.subir;
+        } else if (valor <= 2) {
+            document.getElementById('efectos-texto').innerHTML = info.bajar;
+        } else {
+            document.getElementById('efectos-texto').innerHTML = "Nivel equilibrado. Mezcla balanceada entre claridad y confort.";
+        }
+    }
+
+    function actualizarEQ(frecuencia, valor, color) {
+        const idLimpio = frecuencia.replace(/\s+/g, '');
+        const indicadorDb = document.getElementById(`db-${idLimpio}`);
+        if (indicadorDb) {
+            let signo = valor > 0 ? "+" : "";
+            indicadorDb.innerText = `${signo}${valor} dB`;
+            indicadorDb.style.color = valor != 0 ? `var(--${color})` : 'var(--text-muted)';
+            indicadorDb.style.opacity = valor != 0 ? '1' : '0.6';
+        }
+
+        const info = datosBloques[color];
+        const pantalla = document.getElementById('pantalla-eq');
+        if (!pantalla) return;
+        
+        let colorHex = `var(--${color})`;
+        pantalla.style.borderColor = colorHex;
+        let signo = valor > 0 ? "+" : "";
+        
+        const tituloEq = document.getElementById('eq-titulo');
+        const textoEq = document.getElementById('eq-texto');
+        
+        if (tituloEq) {
+            tituloEq.innerText = `${info.nombre} -> Frecuencia ${frecuencia} a [${signo}${valor} dB]`;
+        }
+        
+        if (textoEq) {
+            if (valor > 0) {
+                textoEq.innerHTML = `<span class='destaque'>Al SUBIR esta barra:</span> ${info.subir}`;
+            } else if (valor < 0) {
+                textoEq.innerHTML = `<span class='destaque'>Al BAJAR esta barra:</span> ${info.bajar}`;
+            } else {
+                textoEq.innerHTML = "Frecuencia en punto neutro (0 dB). Escuchas el sonido original de la mezcla sin alterar.";
+            }
+        }
+    }
+
+    // --- LÓGICA DE INTERACCIÓN MECÁNICA PARA LAS PERILLAS COMPACTAS (KNOBS) ---
+    document.querySelectorAll('.knob-container-mini').forEach(knob => {
+        const minVal = parseInt(knob.dataset.min);
+        const maxVal = parseInt(knob.dataset.max);
+        let currentVal = parseInt(knob.dataset.value);
+        const id = knob.dataset.id;
+
+        // Inicializar rotación física visual al cargar la página
+        actualizarRotacionPerilla(knob, currentVal, minVal, maxVal);
+
+        // 1. Interacción por arrastre vertical de Mouse (Clic y arrastrar)
+        knob.addEventListener('mousedown', function(e) {
+            e.preventDefault();
+            let startY = e.clientY;
+            let startValue = currentVal;
+            
+            function deformaPerilla(moveEvent) {
+                let deltaY = startY - moveEvent.clientY;
+                let cambio = Math.round(deltaY / 12); // 12px por cada nivel para perillas pequeñas
+                let nuevoValor = startValue + cambio;
+                
+                if (nuevoValor < minVal) nuevoValor = minVal;
+                if (nuevoValor > maxVal) nuevoValor = maxVal;
+                
+                currentVal = nuevoValor;
+                knob.dataset.value = currentVal;
+                
+                actualizarRotacionPerilla(knob, currentVal, minVal, maxVal);
+                actualizarEfecto(id, currentVal);
+            }
+
+            function sueltaPerilla() {
+                window.removeEventListener('mousemove', deformaPerilla);
+                window.removeEventListener('mouseup', sueltaPerilla);
+            }
+
+            window.addEventListener('mousemove', deformaPerilla);
+            window.addEventListener('mouseup', sueltaPerilla);
+        });
+
+        // 2. Interacción extra: Soporte para la rueda de desplazamiento del mouse (Scroll)
+        knob.addEventListener('wheel', function(e) {
+            e.preventDefault();
+            // Detecta la dirección del scroll (arriba aumenta, abajo disminuye)
+            let cambio = e.deltaY < 0 ? 1 : -1;
+            let nuevoValor = currentVal + cambio;
+
+            if (nuevoValor >= minVal && nuevoValor <= maxVal) {
+                currentVal = nuevoValor;
+                knob.dataset.value = currentVal;
+                actualizarRotacionPerilla(knob, currentVal, minVal, maxVal);
+                actualizarEfecto(id, currentVal);
+            }
+        });
+    });
+
+    // Función matemática para mapear los valores de mezcla al ángulo físico real (-135deg a 135deg)
+    function actualizarRotacionPerilla(elemento, valor, min, max) {
+        const porcentaje = (valor - min) / (max - min);
+        const grados = (porcentaje * 270) - 135; 
+        elemento.style.transform = `rotate(${grados}deg)`;
+    }
+</script>
+
+</body>
+</html>

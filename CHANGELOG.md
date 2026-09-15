@@ -2,7 +2,18 @@
 
 Todos los cambios notables en la Consola de Audio Interactiva se documentarán en este archivo.
 
-## [0.2] - 2026-09-15
+## [0.3] - 2026-09-15
+### Añadido
+*   Se generó `index.html` como duplicado exacto de `Consola_Audio_0.2.html` para servir como punto de entrada de GitHub Pages y permitir la demo web en tiempo real.
+*   Se añadió URL de demo online (`https://jimmynorman.github.io/mapa-interactivo-audio-fxsound/`) en README y en la descripción del repositorio.
+*   Se configuraron topics/tags del repositorio: `audio-equalizer`, `web-audio`, `interactive-ui`, `neumorphism`, `html5-canvas`, `fxsound-clone`, `ai-ready`, `frontend-development`, `javascript-audio`.
+
+### Corregido
+*   Se restauró el contenido completo de `Consola_Audio_0.2.html` e `index.html` (ambos estaban truncados en la línea 675; se recuperaron las 10 bandas del EQ, pantalla de ayuda y todo el bloque JavaScript). Verificación mediante hash SHA256 idéntico.
+*   Se reemplazaron badges `shields.io` rotos (URLs incompletas procesadas por el proxy camo de GitHub) por badges funcionales con parámetros completos (licencia MIT, último commit, lenguaje HTML).
+
+### Modificado
+*   `README.md`: se añadió sección "Demo en vivo (GitHub Pages)" y aclaración sobre el propósito de `index.html` vs `Consola_Audio_0.2.html`.
 ### Añadido
 *   Se crearon marcadores dinámicos de `dB` individuales justo arriba de cada banda de frecuencia que se iluminan al ser alterados.
 *   Se incoroporó un componente `<canvas>` con interpolación matemática por curvas cuadráticas Bézier para dibujar la línea continua brillante de neón estilo FxSound uniendo los faders.

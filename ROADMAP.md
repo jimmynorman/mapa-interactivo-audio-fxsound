@@ -34,3 +34,8 @@ El frontend se encuentra en un estado **Visualmente Terminado y Altamente Intera
 *   **Requerimientos:**
     *   Agregar un botón de "Reset" con diseño mecánico que regrese todos los faders a `0 dB` y los potenciómetros a sus valores iniciales, redibujando el lienzo gráfico al instante.
     *   Agregar un switch de "Bypass" (Power) que desconecte temporalmente los nodos de efectos de la salida de audio para escuchar la mezcla "plana" sin perder la posición física de los controles.
+
+## 🚀 Despliegue
+*   **GitHub Pages:** Activado en branch `main` / `(root)`. Demo online disponible en `https://jimmynorman.github.io/mapa-interactivo-audio-fxsound/`.
+*   **`index.html`:** Copia idéntica de `Consola_Audio_0.2.html` en la raíz del repo para que GitHub Pages lo reconozca como página de inicio.
+*   **`README.md`:** Aclaración explícita de que `Consola_Audio_0.2.html` es el archivo para trabajar localmente, mientras que `index.html` es solo para la demo web.

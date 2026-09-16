@@ -782,6 +782,110 @@
             min-width: 40px;
             text-align: center;
         }
+
+        /* =========================================================
+           DIÁLOGO MODAL NEUMÓRFICO (Ayuda / Wiki)
+           ========================================================= */
+        .modal-fondo {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.72);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.22s ease, visibility 0.22s ease;
+        }
+
+        .modal-fondo.visible { opacity: 1; visibility: visible; }
+
+        .modal-caja {
+            width: 100%;
+            max-width: 460px;
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.08);
+            transform: translateY(14px) scale(0.97);
+            transition: transform 0.24s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+        }
+
+        .modal-fondo.visible .modal-caja { transform: translateY(0) scale(1); }
+
+        .modal-caja h3 {
+            font-size: 17px;
+            font-weight: 700;
+            margin: 0 0 8px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-caja p {
+            font-size: 13.5px;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin: 0 0 22px;
+        }
+
+        .modal-opciones {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .modal-opcion {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: #e5e5ea;
+            background: linear-gradient(180deg, #26262d 0%, #1a1a1f 100%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 14px 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06);
+            transition: border-color 0.2s ease, color 0.2s ease, transform 0.08s ease;
+            font-family: inherit;
+        }
+
+        .modal-opcion:hover { color: #fff; border-color: var(--primary); }
+        .modal-opcion:active { transform: translateY(1px); }
+        .modal-opcion .icono-opcion { font-size: 18px; flex-shrink: 0; }
+        .modal-opcion .texto-opcion { display: flex; flex-direction: column; gap: 3px; }
+        .modal-opcion .texto-opcion small {
+            font-size: 11.5px;
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+
+        .modal-cancelar {
+            display: block;
+            width: 100%;
+            margin-top: 14px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            font-family: inherit;
+            transition: color 0.2s ease;
+        }
+
+        .modal-cancelar:hover { color: var(--text-main); }
     </style>
     
 </head>
@@ -1097,23 +1201,30 @@
        entrada -> EQ 10 bandas -> graves -> claridad -> compresor ->
        matriz estéreo Mid/Side -> reverb seco/húmedo -> volumen maestro -> salida */
     function crearMotorAudio(ctx) {
-        // ---- Bypass control ----
+        // ---- Punto de entrada común para cualquier fuente de audio ----
+        const entrada = ctx.createGain();
+        entrada.gain.value = 1;
+
+        // ---- Control de Bypass: dos rutas en paralelo desde la entrada ----
+        // gainMotor = ruta procesada (EQ + efectos); gainDirect = ruta limpia.
         const gainMotor = ctx.createGain();
         const gainDirect = ctx.createGain();
-        gainMotor.gain.value = 1; // Motor activo por defecto
-        gainDirect.gain.value = 0; // Bypass apagado por defecto
+        gainMotor.gain.value = 1;  // Motor activo por defecto
+        gainDirect.gain.value = 0; // Bypass inactivo por defecto
 
-        // Connect entrada to both paths
         entrada.connect(gainMotor);
         entrada.connect(gainDirect);
 
         // ---- Banco de 10 filtros Peaking, uno por banda del ecualizador ----
+        let nodo = gainMotor;
         const bancoEq = FRECUENCIAS_EQ.map(function (frecuencia) {
             const filtro = ctx.createBiquadFilter();
             filtro.type = 'peaking';
             filtro.frequency.value = frecuencia;
             filtro.Q.value = 1.4;
             filtro.gain.value = 0;
+            nodo.connect(filtro);
+            nodo = filtro;
             return filtro;
         });
 
@@ -1174,8 +1285,7 @@
         maestro.gain.value = 0.8;
 
         // ================= CABLEADO DEL GRAFO =================
-        // 1) Cadena de ecualización en serie
-        let nodo = entrada;
+        // 1) Cadena de ecualización en serie (arranca en la ruta procesada)
         bancoEq.forEach(function (filtro) {
             nodo.connect(filtro);
             nodo = filtro;
@@ -1221,9 +1331,10 @@
         retornoHumedo.connect(mezclaAmbiente);
         nodo = mezclaAmbiente;
 
-        // 6) Salida
+        // 6) Salida procesada + ruta directa del Bypass
         nodo.connect(maestro);
         maestro.connect(ctx.destination);
+        gainDirect.connect(ctx.destination);
 
         // Cambios suaves de parámetro para evitar chasquidos ("zipper noise")
         function suavizar(parametro, valor) {
@@ -1240,6 +1351,23 @@
             contexto: ctx,
             entrada: entrada,
             salida: maestro,
+
+            /* Conmuta entre la ruta procesada y la ruta directa (Bypass).
+               Las dos ganancias son complementarias: nunca suenan a la vez. */
+            setBypass: function (bypass) {
+                if (bypass) {
+                    suavizar(gainMotor.gain, 0);
+                    suavizar(gainDirect.gain, 1);
+                } else {
+                    suavizar(gainMotor.gain, 1);
+                    suavizar(gainDirect.gain, 0);
+                }
+            },
+
+            /* Indica si el Bypass está activo (para pruebas y estado de la UI). */
+            estaEnBypass: function () {
+                return gainDirect.gain.value > gainMotor.gain.value;
+            },
 
             /* Aplica la ganancia de una banda concreta del ecualizador. */
             aplicarEQ: function (indice, decibelios) {
@@ -1749,15 +1877,45 @@
         anunciarMotor(bypassed ? 'Bypass activo (señal pura)' : 'Motor de audio activo (' + descripcionFuente() + ')', bypassed ? 'activo' : 'encendido');
     });
 
-    // --- Help button ---
-    document.getElementById('btn-help').addEventListener('click', function() {
-        const url = 'WIKI.md';
-        const respuesta = confirm('¿Deseas abrir la Wiki de ayuda en una nueva pestaña? (Cancelar para abrir en una nueva ventana)');
-        if (respuesta) {
-            window.open(url, '_blank');
-        } else {
-            window.open(url, '_blank', 'width=800,height=600');
-        }
+    // --- Botón de ayuda: pregunta cómo abrir la wiki y actúa según la elección ---
+    const modalAyuda = document.getElementById('modal-ayuda');
+    const URL_WIKI = 'wiki.html';
+
+    function cerrarModalAyuda() {
+        modalAyuda.classList.remove('visible');
+    }
+
+    document.getElementById('btn-help').addEventListener('click', function () {
+        modalAyuda.classList.add('visible');
+    });
+
+    document.getElementById('ayuda-pestana').addEventListener('click', function () {
+        window.open(URL_WIKI, '_blank');
+        cerrarModalAyuda();
+    });
+
+    document.getElementById('ayuda-ventana').addEventListener('click', function () {
+        const ancho = 1000;
+        const alto = 760;
+        const izquierda = Math.max(0, Math.round((window.screen.width - ancho) / 2));
+        const arriba = Math.max(0, Math.round((window.screen.height - alto) / 2));
+        window.open(
+            URL_WIKI,
+            'WikiConsolaAudio',
+            'width=' + ancho + ',height=' + alto + ',left=' + izquierda + ',top=' + arriba + ',resizable=yes,scrollbars=yes'
+        );
+        cerrarModalAyuda();
+    });
+
+    document.getElementById('ayuda-cancelar').addEventListener('click', cerrarModalAyuda);
+
+    // Cerrar al hacer clic fuera de la caja o con la tecla Escape
+    modalAyuda.addEventListener('click', function (evento) {
+        if (evento.target === modalAyuda) cerrarModalAyuda();
+    });
+
+    document.addEventListener('keydown', function (evento) {
+        if (evento.key === 'Escape' && modalAyuda.classList.contains('visible')) cerrarModalAyuda();
     });
 
     // --- Playback controls ---
@@ -1770,6 +1928,10 @@
         }
         estadoMotor.reproduciendo = false;
         actualizarBotonPlay();
+        // Reinicia los indicadores de tiempo
+        if (progressBar) progressBar.value = 0;
+        if (timeCurrent) timeCurrent.textContent = '0:00';
+        anunciarMotor('Detenido — ' + descripcionFuente(), 'encendido');
     });
 
     document.getElementById('btn-bwd').addEventListener('click', function() {
@@ -1808,6 +1970,34 @@
         return mins + ':' + (secs < 10 ? '0' : '') + secs;
     }
 </script>
+
+<!-- ===== DIÁLOGO DE AYUDA: ELECCIÓN DE APERTURA DE LA WIKI ===== -->
+    <div class="modal-fondo" id="modal-ayuda" role="dialog" aria-modal="true" aria-labelledby="modal-ayuda-titulo">
+        <div class="modal-caja">
+            <h3 id="modal-ayuda-titulo"> Manual de Usuario</h3>
+            <p>¿Cómo quieres abrir la wiki de ayuda? El manual incluye la referencia completa de cada control, efectos y solución de problemas.</p>
+
+            <div class="modal-opciones">
+                <button type="button" class="modal-opcion" id="ayuda-pestana">
+                    <span class="icono-opcion">🗂️</span>
+                    <span class="texto-opcion">
+                        Abrir en una nueva pestaña
+                        <small>Se integra en la ventana actual del navegador</small>
+                    </span>
+                </button>
+
+                <button type="button" class="modal-opcion" id="ayuda-ventana">
+                    <span class="icono-opcion">🪟</span>
+                    <span class="texto-opcion">
+                        Abrir en una nueva ventana
+                        <small>Ventana independiente de 1000 × 760 px</small>
+                    </span>
+                </button>
+            </div>
+
+            <button type="button" class="modal-cancelar" id="ayuda-cancelar">Cancelar</button>
+        </div>
+    </div>
 
 </body>
 </html>

@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wiki — Consola de Audio FxSound</title>
+<style>
+    :root {
+        --bg-color: #0b0b0d;
+        --card-bg: #141417;
+        --panel-bg: #1c1c21;
+        --text-main: #f5f5f7;
+        --text-muted: #8e8e93;
+        --primary: #ff3b30;
+        --rojo: #ff453a;
+        --naranja: #ff9f0a;
+        --amarillo: #ffd60a;
+        --azul: #64d2ff;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        padding: 30px 15px 60px;
+        display: flex;
+        justify-content: center;
+        min-height: 100vh;
+        background-image: radial-gradient(circle at top, #1a1a24 0%, var(--bg-color) 70%);
+    }
+
+    .contenedor-wiki {
+        width: 100%;
+        max-width: 980px;
+        background-color: var(--card-bg);
+        border-radius: 24px;
+        padding: 34px 38px 44px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* ---- Barra superior del visor ---- */
+    .barra-wiki {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-bottom: 26px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .barra-wiki .marca {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--text-muted);
+    }
+
+    .barra-wiki .marca::before {
+        content: '';
+        display: inline-block;
+        width: 4px;
+        height: 14px;
+        background: var(--primary);
+        border-radius: 2px;
+        box-shadow: 0 0 8px var(--primary);
+    }
+
+    .btn-wiki {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        color: #e5e5ea;
+        background: linear-gradient(180deg, #26262d 0%, #1a1a1f 100%);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 10px;
+        padding: 9px 14px;
+        cursor: pointer;
+        text-decoration: none;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07);
+        transition: color 0.2s ease, border-color 0.2s ease, transform 0.08s ease;
+        font-family: inherit;
+        white-space: nowrap;
+    }
+
+    .btn-wiki:hover { color: #fff; border-color: rgba(255,59,48,0.35); }
+    .btn-wiki:active { transform: translateY(1px); }
+
+    /* ---- Metadatos del frontmatter ---- */
+    .meta-doc {
+        background: #0f0f12;
+        border: 1px solid rgba(255,255,255,0.04);
+        border-left: 3px solid var(--azul);
+        border-radius: 10px;
+        padding: 12px 16px;
+        margin-bottom: 26px;
+        font-size: 12px;
+        color: var(--text-muted);
+        box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+    }
+    .meta-doc b { color: var(--text-main); }
+    .meta-doc .etiquetas { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .meta-doc .etiqueta {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+        color: var(--azul);
+        background: rgba(100,210,255,0.08);
+        border: 1px solid rgba(100,210,255,0.22);
+        border-radius: 20px;
+        padding: 3px 10px;
+    }
+
+    /* ---- Tipografía del documento ---- */
+    #documento { font-size: 15px; line-height: 1.7; }
+    #documento > *:first-child { margin-top: 0; }
+
+    #documento h1 {
+        font-size: 27px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        margin: 0 0 18px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+
+    #documento h2 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 40px 0 14px;
+        padding-left: 14px;
+        border-left: 4px solid var(--primary);
+        box-shadow: -4px 0 12px -4px var(--primary);
+        letter-spacing: -0.2px;
+    }
+
+    #documento h3 {
+        font-size: 16px;
+        font-weight: 700;
+        margin: 28px 0 10px;
+        color: var(--azul);
+        letter-spacing: 0.2px;
+    }
+
+    #documento h4, #documento h5, #documento h6 {
+        font-size: 14px;
+        font-weight: 700;
+        margin: 22px 0 8px;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    #documento p { margin: 0 0 14px; }
+
+    #documento a { color: var(--azul); text-decoration: none; border-bottom: 1px solid rgba(100,210,255,0.3); }
+    #documento a:hover { color: #fff; border-bottom-color: #fff; }
+
+    #documento strong { color: #fff; font-weight: 700; }
+    #documento em { color: #e5e5ea; }
+
+    #documento code {
+        font-family: "SF Mono", "Cascadia Code", Consolas, monospace;
+        font-size: 12.5px;
+        color: var(--amarillo);
+        background: #0b0b0d;
+        border: 1px solid rgba(255,255,255,0.05);
+        border-radius: 5px;
+        padding: 2px 6px;
+    }
+
+    #documento pre {
+        background: #08080a;
+        border: 1px solid rgba(255,255,255,0.05);
+        border-radius: 12px;
+        padding: 16px 18px;
+        margin: 0 0 18px;
+        overflow-x: auto;
+        box-shadow: inset 0 3px 12px rgba(0,0,0,0.85);
+    }
+
+    #documento pre code {
+        background: none;
+        border: none;
+        padding: 0;
+        color: var(--azul);
+        font-size: 12.5px;
+        line-height: 1.6;
+    }
+
+    #documento blockquote {
+        margin: 0 0 18px;
+        padding: 14px 18px;
+        background: #16161a;
+        border-left: 3px solid var(--amarillo);
+        border-radius: 0 10px 10px 0;
+        color: #e5e5ea;
+    }
+    #documento blockquote p:last-child { margin-bottom: 0; }
+
+    #documento ul, #documento ol { margin: 0 0 16px; padding-left: 24px; }
+    #documento li { margin-bottom: 6px; }
+    #documento ul li::marker { color: var(--primary); }
+    #documento ol li::marker { color: var(--azul); font-weight: 700; }
+
+    #documento hr {
+        border: none;
+        height: 1px;
+        background: rgba(255,255,255,0.07);
+        margin: 34px 0;
+    }
+
+    #documento img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 0 0 20px;
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,0.07);
+        box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+    }
+
+    /* ---- Tablas ---- */
+    .tabla-envoltura {
+        overflow-x: auto;
+        margin: 0 0 20px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.05);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+    }
+
+    #documento table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13.5px;
+        background: var(--panel-bg);
+    }
+
+    #documento thead { background: #0f0f12; }
+
+    #documento th {
+        text-align: left;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-muted);
+        padding: 12px 16px;
+        border-bottom: 1px solid rgba(255,255,255,0.07);
+        white-space: nowrap;
+    }
+
+    #documento td {
+        padding: 11px 16px;
+        border-bottom: 1px solid rgba(255,255,255,0.03);
+        vertical-align: top;
+    }
+
+    #documento tbody tr:last-child td { border-bottom: none; }
+    #documento tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+    /* ---- Ancla de destino resaltada ---- */
+    #documento :target {
+        animation: destello 1.6s ease-out;
+        border-radius: 6px;
+    }
+
+    @keyframes destello {
+        0%   { background: rgba(255,59,48,0.22); }
+        100% { background: transparent; }
+    }
+
+    /* ---- Estados ---- */
+    .aviso-carga, .aviso-error {
+        padding: 22px;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 14px;
+        background: #0f0f12;
+        border: 1px solid rgba(255,255,255,0.05);
+        color: var(--text-muted);
+    }
+
+    .aviso-error {
+        border-left: 3px solid var(--primary);
+        color: #e5e5ea;
+        text-align: left;
+        line-height: 1.7;
+    }
+
+    .aviso-error code {
+        display: inline-block;
+        margin-top: 8px;
+    }
+
+    .pie-wiki {
+        margin-top: 44px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255,255,255,0.06);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+        font-size: 12px;
+        color: var(--text-muted);
+    }
+
+    @media (max-width: 640px) {
+        .contenedor-wiki { padding: 24px 18px 32px; }
+        #documento h1 { font-size: 22px; }
+        #documento h2 { font-size: 17px; }
+        #documento { font-size: 14px; }
+    }
+</style>
+</head>
+<body>
+
+<div class="contenedor-wiki">
+    <div class="barra-wiki">
+        <span class="marca" id="titulo-doc">Wiki de Usuario</span>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a class="btn-wiki" href="index.html">🎛️ Ir a la consola</a>
+            <a class="btn-wiki" href="WIKI.md" download>⬇️ Descargar .md</a>
+        </div>
+    </div>
+
+    <div id="meta-doc"></div>
+    <article id="documento">
+        <div class="aviso-carga">Cargando el manual…</div>
+    </article>
+
+    <div class="pie-wiki">
+        <span id="ruta-actual">WIKI.md</span>
+        <a class="btn-wiki" href="#top" id="btn-arriba">⬆️ Volver arriba</a>
+    </div>
+</div>
+
+<script>
+/* =====================================================================
+   VISOR DE WIKI — Renderizador de Markdown autocontenido y sin dependencias
+   ---------------------------------------------------------------------
+   Convierte WIKI.md (y cualquier otro .md enlazado desde ella) en HTML
+   navegable, respetando los anclajes, tablas, bloques de código, imágenes,
+   hipervínculos y relaciones entre documentos.
+   ===================================================================== */
+
+const RUTA_INICIAL = 'WIKI.md';
+
+/* ---------- Utilidades de seguridad y anclajes ---------- */
+
+function escaparHtml(texto) {
+    return String(texto)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
+function generarAncla(texto) {
+    return String(texto)
+        .toLowerCase()
+        .replace(/<[^>]+>/g, '')
+        .replace(/[^\w\s\u00e1\u00e9\u00ed\u00f3\u00fa\u00fc\u00f1-]/g, '')
+        .trim()
+        .replace(/\s+/g, '-');
+}
+
+/* ---------- Renderizado en línea ---------- */
+
+function renderizarEnLinea(texto) {
+    let t = escaparHtml(texto);
+
+    // Código en línea
+    t = t.replace(/`([^`]+)`/g, (m, codigo) => '<code>' + codigo + '</code>');
+
+    // Imágenes: ![alt](ruta)
+    t = t.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, (m, alt, src) =>
+        '<img src="' + src + '" alt="' + alt + '" loading="lazy">');
+
+    // Enlaces: [texto](destino)
+    t = t.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, texto2, destino) => {
+        const externo = /^https?:\/\//i.test(destino);
+        const atributos = externo ? ' target="_blank" rel="noopener noreferrer"' : '';
+        return '<a href="' + destino + '"' + atributos + '>' + texto2 + '</a>';
+    });
+
+    // Negrita y cursiva (la negrita admite énfasis anidado: **texto (*sub*) **)
+    t = t.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    t = t.replace(/(^|[^*\w])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+
+    return t;
+}
+
+/* ---------- Renderizado de bloques ---------- */
+
+function dividirFilaTabla(linea) {
+    return linea.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((c) => c.trim());
+}
+
+function esSeparadorTabla(linea) {
+    return /^\s*\|?[\s:-]*-[\s|:-]*\|?\s*$/.test(linea) && linea.includes('-');
+}
+
+function renderizarMarkdown(markdown) {
+    const lineas = String(markdown).replace(/\r\n/g, '\n').split('\n');
+    const salida = [];
+    let i = 0;
+    let listaAbierta = null;
+
+    function cerrarLista() {
+        if (listaAbierta) {
+            salida.push('</' + listaAbierta + '>');
+            listaAbierta = null;
+        }
+    }
+
+    /* --- Frontmatter YAML inicial --- */
+    let frontmatter = null;
+    if (lineas[0] !== undefined && lineas[0].trim() === '---') {
+        const cierre = lineas.indexOf('---', 1);
+        if (cierre > 0) {
+            frontmatter = lineas.slice(1, cierre);
+            i = cierre + 1;
+        }
+    }
+
+    while (i < lineas.length) {
+        const linea = lineas[i];
+
+        // Bloques de código con vallas ```
+        if (/^\s*```/.test(linea)) {
+            cerrarLista();
+            const cuerpo = [];
+            i++;
+            while (i < lineas.length && !/^\s*```/.test(lineas[i])) {
+                cuerpo.push(lineas[i]);
+                i++;
+            }
+            i++; // salta la valla de cierre
+            salida.push('<pre><code>' + escaparHtml(cuerpo.join('\n')) + '</code></pre>');
+            continue;
+        }
+
+        // Tablas
+        if (/^\s*\|/.test(linea) && lineas[i + 1] !== undefined && esSeparadorTabla(lineas[i + 1])) {
+            cerrarLista();
+            const cabecera = dividirFilaTabla(linea);
+            i += 2;
+            const filas = [];
+            while (i < lineas.length && /^\s*\|/.test(lineas[i])) {
+                filas.push(dividirFilaTabla(lineas[i]));
+                i++;
+            }
+            let tabla = '<div class="tabla-envoltura"><table><thead><tr>';
+            cabecera.forEach((c) => { tabla += '<th>' + renderizarEnLinea(c) + '</th>'; });
+            tabla += '</tr></thead><tbody>';
+            filas.forEach((fila) => {
+                tabla += '<tr>';
+                for (let c = 0; c < cabecera.length; c++) {
+                    tabla += '<td>' + renderizarEnLinea(fila[c] !== undefined ? fila[c] : '') + '</td>';
+                }
+                tabla += '</tr>';
+            });
+            tabla += '</tbody></table></div>';
+            salida.push(tabla);
+            continue;
+        }
+
+        // Encabezados
+        const encabezado = linea.match(/^(#{1,6})\s+(.*)$/);
+        if (encabezado) {
+            cerrarLista();
+            const nivel = encabezado[1].length;
+            const contenido = encabezado[2];
+            const ancla = generarAncla(contenido);
+            salida.push(
+                '<h' + nivel + ' id="' + ancla + '">' + renderizarEnLinea(contenido) + '</h' + nivel + '>'
+            );
+            i++;
+            continue;
+        }
+
+        // Regla horizontal
+        if (/^\s*(-{3,}|\*{3,}|_{3,})\s*$/.test(linea)) {
+            cerrarLista();
+            salida.push('<hr>');
+            i++;
+            continue;
+        }
+
+        // Cita
+        if (/^\s*>\s?/.test(linea)) {
+            cerrarLista();
+            const cuerpo = [];
+            while (i < lineas.length && /^\s*>\s?/.test(lineas[i])) {
+                cuerpo.push(lineas[i].replace(/^\s*>\s?/, ''));
+                i++;
+            }
+            salida.push('<blockquote>' + renderizarEnLinea(cuerpo.join(' ')) + '</blockquote>');
+            continue;
+        }
+
+        // Lista desordenada
+        if (/^\s*[-*+]\s+/.test(linea)) {
+            if (listaAbierta !== 'ul') {
+                cerrarLista();
+                salida.push('<ul>');
+                listaAbierta = 'ul';
+            }
+            salida.push('<li>' + renderizarEnLinea(linea.replace(/^\s*[-*+]\s+/, '')) + '</li>');
+            i++;
+            continue;
+        }
+
+        // Lista ordenada
+        if (/^\s*\d+\.\s+/.test(linea)) {
+            if (listaAbierta !== 'ol') {
+                cerrarLista();
+                salida.push('<ol>');
+                listaAbierta = 'ol';
+            }
+            salida.push('<li>' + renderizarEnLinea(linea.replace(/^\s*\d+\.\s+/, '')) + '</li>');
+            i++;
+            continue;
+        }
+
+        // Anclajes HTML explícitos (permitidos: sólo <a id="...">...</a>)
+        if (/^\s*<a\s+id="[\w-]+"\s*><\/a>\s*$/.test(linea)) {
+            cerrarLista();
+            salida.push(linea.trim());
+            i++;
+            continue;
+        }
+
+        // Línea vacía
+        if (linea.trim() === '') {
+            cerrarLista();
+            i++;
+            continue;
+        }
+
+        // Párrafo
+        cerrarLista();
+        const parrafo = [];
+        while (
+            i < lineas.length &&
+            lineas[i].trim() !== '' &&
+            !/^(#{1,6})\s+/.test(lineas[i]) &&
+            !/^\s*[-*+]\s+/.test(lineas[i]) &&
+            !/^\s*\d+\.\s+/.test(lineas[i]) &&
+            !/^\s*\|/.test(lineas[i]) &&
+            !/^\s*```/.test(lineas[i]) &&
+            !/^\s*>\s?/.test(lineas[i])
+        ) {
+            parrafo.push(lineas[i]);
+            i++;
+        }
+        salida.push('<p>' + renderizarEnLinea(parrafo.join(' ')) + '</p>');
+    }
+
+    cerrarLista();
+    return { html: salida.join('\n'), frontmatter };
+}
+
+/* ---------- Presentación de los metadatos ---------- */
+
+function mostrarFrontmatter(lineasMeta) {
+    const contenedor = document.getElementById('meta-doc');
+    contenedor.innerHTML = '';
+    if (!lineasMeta || !lineasMeta.length) return;
+
+    const datos = {};
+    lineasMeta.forEach((linea) => {
+        const partes = linea.match(/^([\w-]+):\s*(.*)$/);
+        if (partes) datos[partes[1]] = partes[2];
+    });
+
+    const titulo = document.getElementById('titulo-doc');
+    if (titulo && datos.title) titulo.textContent = datos.title;
+
+    let html = '';
+    if (datos.version) html += '<div><b>Versión:</b> ' + escaparHtml(datos.version) + '</div>';
+    if (datos.actualizado) html += '<div><b>Actualizado:</b> ' + escaparHtml(datos.actualizado) + '</div>';
+    if (datos.tags) {
+        html += '<div class="etiquetas">';
+        datos.tags.split(',').forEach((etiqueta) => {
+            const limpia = etiqueta.trim();
+            if (limpia) html += '<span class="etiqueta">#' + escaparHtml(limpia) + '</span>';
+        });
+        html += '</div>';
+    }
+
+    if (html) {
+        contenedor.innerHTML = '<div class="meta-doc">' + html + '</div>';
+    }
+}
+
+/* ---------- Carga de documentos ---------- */
+
+async function cargarDocumento(ruta) {
+    const articulo = document.getElementById('documento');
+    const rutaActual = document.getElementById('ruta-actual');
+    articulo.innerHTML = '<div class="aviso-carga">Cargando ' + escaparHtml(ruta) + '…</div>';
+
+    try {
+        const respuesta = await fetch(ruta, { cache: 'no-cache' });
+        if (!respuesta.ok) throw new Error('HTTP ' + respuesta.status + ' ' + respuesta.statusText);
+
+        const markdown = await respuesta.text();
+        const resultado = renderizarMarkdown(markdown);
+
+        articulo.innerHTML = resultado.html;
+        mostrarFrontmatter(resultado.frontmatter);
+        rutaActual.textContent = ruta;
+        document.title = 'Wiki — ' + ruta.replace(/\.md$/i, '');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (error) {
+        document.getElementById('meta-doc').innerHTML = '';
+        articulo.innerHTML =
+            '<div class="aviso-error">' +
+            '<b>No se pudo cargar el documento «' + escaparHtml(ruta) + '».</b><br>' +
+            'Motivo: ' + escaparHtml(error.message) + '<br><br>' +
+            'Este visor necesita que la página se sirva desde un servidor web (GitHub Pages o un servidor local). ' +
+            'Si abriste el archivo directamente como <code>file:///</code>, el navegador bloquea la lectura por políticas de seguridad (CORS).' +
+            '</div>';
+    }
+}
+
+/* ---------- Navegación interna entre documentos .md ---------- */
+
+document.getElementById('documento').addEventListener('click', function (evento) {
+    const enlace = evento.target.closest('a');
+    if (!enlace) return;
+
+    const destino = enlace.getAttribute('href') || '';
+
+    // Convierte los enlaces a otros .md en navegación dentro del propio visor
+    if (/\.md$/i.test(destino) && !/^https?:\/\//i.test(destino)) {
+        evento.preventDefault();
+        cargarDocumento(destino);
+    }
+});
+
+document.getElementById('btn-arriba').addEventListener('click', function (evento) {
+    evento.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+/* ---------- Arranque ---------- */
+
+(function iniciar() {
+    // Permite abrir la wiki con ?doc=OTRO.md para enlazar documentos concretos
+    const parametros = new URLSearchParams(window.location.search);
+    const documento = parametros.get('doc') || RUTA_INICIAL;
+    cargarDocumento(documento);
+})();
+</script>
+
+</body>
+</html>

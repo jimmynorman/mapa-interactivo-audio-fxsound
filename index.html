@@ -701,15 +701,99 @@
             .visor-transporte { flex-basis: 100%; }
         }
 
+        /* Botón de potencia (bypass) */
+        .btn-power {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            color: #e5e5ea;
+            background: linear-gradient(180deg, #26262d 0%, #1a1a1f 100%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+            transition: all 0.2s ease;
+        }
+        .btn-power:hover:not(:disabled) { color: #fff; border-color: rgba(255,59,48,0.35); }
+        .btn-power.activo {
+            color: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 14px rgba(255,59,48,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+
+        /* Botón de ayuda */
+        .btn-help {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            font-size: 18px;
+            color: #e5e5ea;
+            background: linear-gradient(180deg, #26262d 0%, #1a1a1f 100%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+            transition: all 0.2s ease;
+        }
+        .btn-help:hover { color: #fff; border-color: var(--primary); }
+
+        /* Controles de reproducción */
+        .btn-stop, .btn-fwd, .btn-bwd {
+            display: inline-flex;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #e5e5ea;
+            background: linear-gradient(180deg, #26262d 0%, #1a1a1f 100%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+            transition: all 0.2s ease;
+        }
+        .btn-stop:hover:not(:disabled), .btn-fwd:hover:not(:disabled), .btn-bwd:hover:not(:disabled) {
+            color: #fff;
+            border-color: rgba(64, 156, 255, 0.5); /* Blue-ish */
+        }
+        
+        .progress-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+        .progress-bar {
+            flex: 1;
+            height: 6px;
+            accent-color: var(--azul);
+            cursor: pointer;
+            background: #2c2c35;
+            border-radius: 3px;
+        }
+        .time-display {
+            font-size: 12px;
+            color: var(--text-muted);
+            min-width: 40px;
+            text-align: center;
+        }
     </style>
     
 </head>
 <body>
     
 <div class="container">
-    <header>
-        <h1>Mapa Visual y Dinámico de Audio</h1>
-        <p>Toca o desliza cualquier perilla para saber exactamente qué cambia en tu oído</p>
+    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 20px;">
+        <div class="header-left">
+            <h1>Mapa Visual y Dinámico de Audio</h1>
+            <p>Toca o desliza cualquier perilla para saber exactamente qué cambia en tu oído</p>
+        </div>
+        <button type="button" class="btn-help" id="btn-help">❓</button>
     </header>
 
     <!-- ===== BARRA DE TRANSPORTE: MOTOR DE AUDIO REAL (Hito 1) ===== -->
@@ -720,6 +804,7 @@
             <button type="button" class="btn-mecanico" id="btn-cargar">📂 Cargar audio</button>
             <button type="button" class="btn-mecanico" id="btn-demo">🎵 Loop de prueba</button>
             <button type="button" class="btn-mecanico" id="btn-play" disabled>▶ Reproducir</button>
+            <button type="button" class="btn-power" id="btn-power" title="Power (Bypass)">⏻</button>
         </div>
 
         <div class="transporte-separador"></div>
@@ -735,6 +820,19 @@
             <span class="volumen-etiqueta">Vol</span>
             <input type="range" id="volumen-maestro" min="0" max="100" step="1" value="80">
             <span class="valor-num" id="val-volumen">80%</span>
+        </div>
+
+        <div class="transporte-separador"></div>
+
+        <div class="transporte-grupo playback-controls">
+            <button type="button" class="btn-stop" id="btn-stop">■</button>
+            <div class="progress-wrapper">
+                <span class="time-display" id="time-current">0:00</span>
+                <input type="range" class="progress-bar" id="progress-bar" min="0" max="100" value="0">
+                <span class="time-display" id="time-total">0:00</span>
+            </div>
+            <button type="button" class="btn-bwd" id="btn-bwd">⏮ 10s</button>
+            <button type="button" class="btn-fwd" id="btn-fwd">⏩ 10s</button>
         </div>
     </section>
 
@@ -999,9 +1097,15 @@
        entrada -> EQ 10 bandas -> graves -> claridad -> compresor ->
        matriz estéreo Mid/Side -> reverb seco/húmedo -> volumen maestro -> salida */
     function crearMotorAudio(ctx) {
-        // ---- Punto de entrada común para cualquier fuente de audio ----
-        const entrada = ctx.createGain();
-        entrada.gain.value = 1;
+        // ---- Bypass control ----
+        const gainMotor = ctx.createGain();
+        const gainDirect = ctx.createGain();
+        gainMotor.gain.value = 1; // Motor activo por defecto
+        gainDirect.gain.value = 0; // Bypass apagado por defecto
+
+        // Connect entrada to both paths
+        entrada.connect(gainMotor);
+        entrada.connect(gainDirect);
 
         // ---- Banco de 10 filtros Peaking, uno por banda del ecualizador ----
         const bancoEq = FRECUENCIAS_EQ.map(function (frecuencia) {
@@ -1632,6 +1736,76 @@
         const porcentaje = (valor - min) / (max - min);
         const grados = (porcentaje * 270) - 135; 
         elemento.style.transform = `rotate(${grados}deg)`;
+    }
+    // --- Bypass control ---
+    let bypassed = false;
+    const btnPower = document.getElementById('btn-power');
+    btnPower.addEventListener('click', function() {
+        if (!motor) iniciarMotor();
+        if (!motor) return;
+        bypassed = !bypassed;
+        btnPower.classList.toggle('activo', bypassed);
+        motor.setBypass(bypassed);
+        anunciarMotor(bypassed ? 'Bypass activo (señal pura)' : 'Motor de audio activo (' + descripcionFuente() + ')', bypassed ? 'activo' : 'encendido');
+    });
+
+    // --- Help button ---
+    document.getElementById('btn-help').addEventListener('click', function() {
+        const url = 'WIKI.md';
+        const respuesta = confirm('¿Deseas abrir la Wiki de ayuda en una nueva pestaña? (Cancelar para abrir en una nueva ventana)');
+        if (respuesta) {
+            window.open(url, '_blank');
+        } else {
+            window.open(url, '_blank', 'width=800,height=600');
+        }
+    });
+
+    // --- Playback controls ---
+    document.getElementById('btn-stop').addEventListener('click', function() {
+        if (estadoMotor.modo === 'archivo') {
+            estadoMotor.elemento.pause();
+            estadoMotor.elemento.currentTime = 0;
+        } else if (estadoMotor.modo === 'demo') {
+            detenerDemo();
+        }
+        estadoMotor.reproduciendo = false;
+        actualizarBotonPlay();
+    });
+
+    document.getElementById('btn-bwd').addEventListener('click', function() {
+        if (estadoMotor.modo === 'archivo') {
+            estadoMotor.elemento.currentTime = Math.max(0, estadoMotor.elemento.currentTime - 10);
+        }
+    });
+    document.getElementById('btn-fwd').addEventListener('click', function() {
+        if (estadoMotor.modo === 'archivo') {
+            estadoMotor.elemento.currentTime = Math.min(estadoMotor.elemento.duration, estadoMotor.elemento.currentTime + 10);
+        }
+    });
+
+    const progressBar = document.getElementById('progress-bar');
+    const timeCurrent = document.getElementById('time-current');
+    const timeTotal = document.getElementById('time-total');
+
+    estadoMotor.elemento.addEventListener('timeupdate', function() {
+        if (estadoMotor.modo === 'archivo' && estadoMotor.elemento.duration) {
+            const progress = (estadoMotor.elemento.currentTime / estadoMotor.elemento.duration) * 100;
+            progressBar.value = progress;
+            timeCurrent.textContent = formatTime(estadoMotor.elemento.currentTime);
+            timeTotal.textContent = formatTime(estadoMotor.elemento.duration);
+        }
+    });
+
+    progressBar.addEventListener('input', function() {
+        if (estadoMotor.modo === 'archivo' && estadoMotor.elemento.duration) {
+            estadoMotor.elemento.currentTime = (this.value / 100) * estadoMotor.elemento.duration;
+        }
+    });
+
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return mins + ':' + (secs < 10 ? '0' : '') + secs;
     }
 </script>
 

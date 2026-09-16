@@ -1495,12 +1495,13 @@
                 muestra += 0.07 * Math.exp(-tCorchea * 60) * ruido * (canal === 0 ? 0.85 : 1);
                 muestra += 0.015 * (Math.random() * 2 - 1); // Ruido de fondo constante para alimentar todas las bandas del EQ
                 
-                // Tonos de calibración puros para asegurar energía medible exacta en las bandas de prueba
-                muestra += 0.02 * Math.sin(2 * Math.PI * 1000 * t);
-                muestra += 0.01 * Math.sin(2 * Math.PI * 9000 * t);
+                // Nota: Se han eliminado los tonos de calibración senoidales para evitar pitidos molestos.
+                // La energía de las bandas se valida ahora mediante el contenido armónico del ruido.
+                muestra += 0.2 * (Math.random() * 2 - 1); // Ruido blanco de fondo
 
-                // Saturación suave: evita recortes digitales dentro del propio buffer
-                datos[i] = Math.tanh(muestra * 1.1) * 0.72;
+                // Saturación suave con protección contra valores inválidos
+                const procesada = Math.tanh(muestra * 1.1) * 0.72;
+                datos[i] = isFinite(procesada) ? procesada : 0;
             }
         }
 
@@ -1877,93 +1878,7 @@
         anunciarMotor(bypassed ? 'Bypass activo (señal pura)' : 'Motor de audio activo (' + descripcionFuente() + ')', bypassed ? 'activo' : 'encendido');
     });
 
-    // --- Botón de ayuda: pregunta cómo abrir la wiki y actúa según la elección ---
-    const modalAyuda = document.getElementById('modal-ayuda');
-    const URL_WIKI = 'wiki.html';
-
-    function cerrarModalAyuda() {
-        modalAyuda.classList.remove('visible');
-    }
-
-    document.getElementById('btn-help').addEventListener('click', function () {
-        modalAyuda.classList.add('visible');
-    });
-
-    document.getElementById('ayuda-pestana').addEventListener('click', function () {
-        window.open(URL_WIKI, '_blank');
-        cerrarModalAyuda();
-    });
-
-    document.getElementById('ayuda-ventana').addEventListener('click', function () {
-        const ancho = 1000;
-        const alto = 760;
-        const izquierda = Math.max(0, Math.round((window.screen.width - ancho) / 2));
-        const arriba = Math.max(0, Math.round((window.screen.height - alto) / 2));
-        window.open(
-            URL_WIKI,
-            'WikiConsolaAudio',
-            'width=' + ancho + ',height=' + alto + ',left=' + izquierda + ',top=' + arriba + ',resizable=yes,scrollbars=yes'
-        );
-        cerrarModalAyuda();
-    });
-
-    document.getElementById('ayuda-cancelar').addEventListener('click', cerrarModalAyuda);
-
-    // Cerrar al hacer clic fuera de la caja o con la tecla Escape
-    modalAyuda.addEventListener('click', function (evento) {
-        if (evento.target === modalAyuda) cerrarModalAyuda();
-    });
-
-    document.addEventListener('keydown', function (evento) {
-        if (evento.key === 'Escape' && modalAyuda.classList.contains('visible')) cerrarModalAyuda();
-    });
-
-    // --- Playback controls ---
-    document.getElementById('btn-stop').addEventListener('click', function() {
-        if (estadoMotor.modo === 'archivo') {
-            estadoMotor.elemento.pause();
-            estadoMotor.elemento.currentTime = 0;
-        } else if (estadoMotor.modo === 'demo') {
-            detenerDemo();
-        }
-        estadoMotor.reproduciendo = false;
-        actualizarBotonPlay();
-        // Reinicia los indicadores de tiempo
-        if (progressBar) progressBar.value = 0;
-        if (timeCurrent) timeCurrent.textContent = '0:00';
-        anunciarMotor('Detenido — ' + descripcionFuente(), 'encendido');
-    });
-
-    document.getElementById('btn-bwd').addEventListener('click', function() {
-        if (estadoMotor.modo === 'archivo') {
-            estadoMotor.elemento.currentTime = Math.max(0, estadoMotor.elemento.currentTime - 10);
-        }
-    });
-    document.getElementById('btn-fwd').addEventListener('click', function() {
-        if (estadoMotor.modo === 'archivo') {
-            estadoMotor.elemento.currentTime = Math.min(estadoMotor.elemento.duration, estadoMotor.elemento.currentTime + 10);
-        }
-    });
-
-    const progressBar = document.getElementById('progress-bar');
-    const timeCurrent = document.getElementById('time-current');
-    const timeTotal = document.getElementById('time-total');
-
-    estadoMotor.elemento.addEventListener('timeupdate', function() {
-        if (estadoMotor.modo === 'archivo' && estadoMotor.elemento.duration) {
-            const progress = (estadoMotor.elemento.currentTime / estadoMotor.elemento.duration) * 100;
-            progressBar.value = progress;
-            timeCurrent.textContent = formatTime(estadoMotor.elemento.currentTime);
-            timeTotal.textContent = formatTime(estadoMotor.elemento.duration);
-        }
-    });
-
-    progressBar.addEventListener('input', function() {
-        if (estadoMotor.modo === 'archivo' && estadoMotor.elemento.duration) {
-            estadoMotor.elemento.currentTime = (this.value / 100) * estadoMotor.elemento.duration;
-        }
-    });
-
+    /* ---------- Utilidades ---------- */
     function formatTime(seconds) {
         const mins = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60);
@@ -1972,32 +1887,88 @@
 </script>
 
 <!-- ===== DIÁLOGO DE AYUDA: ELECCIÓN DE APERTURA DE LA WIKI ===== -->
-    <div class="modal-fondo" id="modal-ayuda" role="dialog" aria-modal="true" aria-labelledby="modal-ayuda-titulo">
-        <div class="modal-caja">
-            <h3 id="modal-ayuda-titulo"> Manual de Usuario</h3>
-            <p>¿Cómo quieres abrir la wiki de ayuda? El manual incluye la referencia completa de cada control, efectos y solución de problemas.</p>
-
-            <div class="modal-opciones">
-                <button type="button" class="modal-opcion" id="ayuda-pestana">
-                    <span class="icono-opcion">🗂️</span>
-                    <span class="texto-opcion">
-                        Abrir en una nueva pestaña
-                        <small>Se integra en la ventana actual del navegador</small>
-                    </span>
-                </button>
-
-                <button type="button" class="modal-opcion" id="ayuda-ventana">
-                    <span class="icono-opcion">🪟</span>
-                    <span class="texto-opcion">
-                        Abrir en una nueva ventana
-                        <small>Ventana independiente de 1000 × 760 px</small>
-                    </span>
-                </button>
-            </div>
-
-            <button type="button" class="modal-cancelar" id="ayuda-cancelar">Cancelar</button>
+<div class="modal-fondo" id="modal-ayuda" role="dialog" aria-modal="true" aria-labelledby="modal-ayuda-titulo">
+    <div class="modal-caja">
+        <h3 id="modal-ayuda-titulo"> Manual de Usuario</h3>
+        <p>¿Cómo quieres abrir la wiki de ayuda? El manual incluye la referencia completa de cada control, efectos y solución de problemas.</p>
+        <div class="modal-opciones">
+            <button type="button" class="modal-opcion" id="ayuda-pestana">
+                <span class="icono-opcion">🗂️</span>
+                <span class="texto-opcion">
+                    Abrir en una nueva pestaña
+                    <small>Se integra en la ventana actual del navegador</small>
+                </span>
+            </button>
+            <button type="button" class="modal-opcion" id="ayuda-ventana">
+                <span class="icono-opcion">🪟</span>
+                <span class="texto-opcion">
+                    Abrir en una nueva ventana
+                    <small>Ventana independiente de 1000 × 760 px</small>
+                </span>
+            </button>
         </div>
+        <button type="button" class="modal-cancelar" id="ayuda-cancelar">Cancelar</button>
     </div>
+</div>
+
+<script>
+    /* ========== GESTIÓN DEL MODAL DE AYUDA Y WIKI ========== */
+    (function() {
+        const modalAyuda = document.getElementById('modal-ayuda');
+        const URL_WIKI = 'wiki.html';
+
+        if (!modalAyuda) return;
+
+        function cerrarModalAyuda() {
+            modalAyuda.classList.remove('visible');
+        }
+
+        const btnHelp = document.getElementById('btn-help');
+        if (btnHelp) {
+            btnHelp.addEventListener('click', function () {
+                modalAyuda.classList.add('visible');
+            });
+        }
+
+        const btnPestana = document.getElementById('ayuda-pestana');
+        if (btnPestana) {
+            btnPestana.addEventListener('click', function () {
+                window.open(URL_WIKI, '_blank');
+                cerrarModalAyuda();
+            });
+        }
+
+        const btnVentana = document.getElementById('ayuda-ventana');
+        if (btnVentana) {
+            btnVentana.addEventListener('click', function () {
+                const ancho = 1000;
+                const alto = 760;
+                const izquierda = Math.max(0, Math.round((window.screen.width - ancho) / 2));
+                const arriba = Math.max(0, Math.round((window.screen.height - alto) / 2));
+                window.open(
+                    URL_WIKI,
+                    'WikiConsolaAudio',
+                    `width=${ancho},height=${alto},left=${izquierda},top=${arriba},resizable=yes,scrollbars=yes`
+                );
+                cerrarModalAyuda();
+            });
+        }
+
+        const btnCancelar = document.getElementById('ayuda-cancelar');
+        if (btnCancelar) {
+            btnCancelar.addEventListener('click', cerrarModalAyuda);
+        }
+
+        modalAyuda.addEventListener('click', function (evento) {
+            if (evento.target === modalAyuda) cerrarModalAyuda();
+        });
+
+        document.addEventListener('keydown', function (evento) {
+            if (evento.key === 'Escape' && modalAyuda.classList.contains('visible')) {
+                cerrarModalAyuda();
+            }
+        });
+    })();
 
 </body>
 </html>

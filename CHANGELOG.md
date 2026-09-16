@@ -2,6 +2,28 @@
 
 Todos los cambios notables en la Consola de Audio Interactiva se documentarán en este archivo.
 
+## [0.5] - 2026-09-16
+### Añadido
+*   **Botón de Bypass (⏻):** interruptor que conmuta entre la ruta procesada y una ruta directa paralela, permitiendo comparar en tiempo real la señal original frente a la procesada sin perder la posición de los controles. Implementado con dos `GainNode` de ganancias complementarias y transición suave.
+*   **Controles de reproducción clásicos:** botón de Stop (■), retroceso y avance de 10 segundos, barra de progreso interactiva (*seek*) y visualización de tiempo transcurrido/total en formato `m:ss`.
+*   **Diálogo modal neumórfico de ayuda:** sustituye al `confirm()` nativo. Pregunta al usuario si desea abrir el manual en una **nueva pestaña** o en una **nueva ventana** (1000 × 760 px centrada) y actúa según la elección. Se cierra con Escape o clic en el fondo.
+*   **Wiki de usuario (`WIKI.md`):** manual completo de 12 secciones con frontmatter YAML (`title`, `version`, `actualizado`, `tags`), índice navegable, tablas de referencia, glosario, guía de solución de problemas y relaciones cruzadas entre documentos.
+*   **Visor de wiki (`wiki.html`):** renderizador de Markdown autocontenido —sin dependencias externas— que muestra la wiki con la misma estética neumórfica de la consola, soporta navegación entre documentos `.md` y ofrece descarga del archivo fuente.
+*   **Imagen de referencia en la documentación:** la captura de pantalla del usuario se integra en `README.md` y `WIKI.md` bajo `assets/`.
+*   **Arnés de pruebas del visor (`pruebas/wiki.test.js`):** 38 comprobaciones que verifican el renderizado, la integridad de todos los hipervínculos internos, la existencia real de los archivos enlazados y la seguridad frente a inyección de HTML.
+
+### Corregido
+*   **Motor de audio roto durante el desarrollo:** la refactorización del Bypass eliminó por error la declaración del nodo `entrada` y el cableado inicial del banco de ecualización, dejando el motor inoperante. Detectado por el arnés de pruebas y restaurado.
+*   **Renderer de Markdown:** la regla de negrita no admitía énfasis anidado, por lo que casos como `**Estantería (*shelf*)**` quedaban sin convertir. Corregido con una expresión regular no codiciosa.
+*   **`README.md` corrupto:** el archivo había quedado con el párrafo de presentación duplicado y referencias a nombres de imagen inexistentes. Reescrito íntegramente.
+*   **Nodos de ganancia sin valor inicial explícito:** en Web Audio el valor por defecto de un `GainNode` es `1.0`, lo que dejaba los canales laterales en un estado incorrecto hasta el primer ajuste. Ahora todos los nodos declaran su valor de reposo.
+
+### Modificado
+*   `Consola_Audio_0.2.html` — Encabezado convertido a Flexbox para alojar el botón de ayuda; barra de transporte ampliada con los nuevos controles; motor de audio reestructurado en dos rutas paralelas.
+*   `index.html` — Sincronizado; hash SHA256 idéntico verificado.
+*   `README.md` — Reescrito: nueva imagen, características del motor real, tabla de estructura del proyecto, comandos de verificación y enlace a la wiki.
+*   `ROADMAP.md` — Estado actual actualizado a v0.5 e incorporación de las nuevas restricciones de arquitectura.
+
 ## [0.4] - 2026-09-16
 ### Añadido
 *   Implementado motor de audio real mediante Web Audio API (Hito 1), transformando la consola de simulación visual en un procesador de audio totalmente funcional.

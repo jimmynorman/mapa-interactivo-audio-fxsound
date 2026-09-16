@@ -263,7 +263,20 @@ afirmar('Las 10 etiquetas del DOM mapean exactamente a las 10 frecuencias',
 /* ---------- 2. Topología del grafo ---------- */
 grupo('2. Topología del grafo de audio');
 
-afirmar('La entrada se conecta al primer filtro del banco', conectaDirecto(api.entrada, peaking[0]));
+// Localización estructural de los dos nodos de ganancia del Bypass
+const gainMotor = ctx.nodosCreados.find(
+    (n) => n.tipoNodo === 'GainNode' && conectaDirecto(n, peaking[0])
+);
+const gainDirect = ctx.nodosCreados.find(
+    (n) => n.tipoNodo === 'GainNode' && conectaDirecto(n, ctx.destination) && n !== api.salida
+);
+
+afirmar('La entrada se bifurca hacia la ruta procesada (gainMotor)',
+    conectaDirecto(api.entrada, gainMotor));
+afirmar('La entrada se bifurca hacia la ruta directa del Bypass (gainDirect)',
+    conectaDirecto(api.entrada, gainDirect));
+afirmar('La ruta procesada alimenta el primer filtro del banco',
+    conectaDirecto(gainMotor, peaking[0]));
 afirmar('Los 10 filtros peaking están encadenados en serie',
     peaking.every((f, i) => i === peaking.length - 1 || conectaDirecto(f, peaking[i + 1])));
 
@@ -511,6 +524,17 @@ afirmar('El impulso es estéreo con colas distintas por canal',
     !casiIgual(impulso.getChannelData(0)[1000], impulso.getChannelData(1)[1000]));
 
 /* ---------- Resumen ---------- */
+// --- Probar Bypass (los nodos se localizaron estructuralmente en la sección 2) ---
+afirmar('Se localizan los nodos de Bypass en el grafo', !!(gainMotor && gainDirect));
+
+api.setBypass(true);
+afirmar('Bypass activado: ganancia motor a 0', casiIgual(gainMotor.gain.value, 0));
+afirmar('Bypass activado: ganancia directo a 1', casiIgual(gainDirect.gain.value, 1));
+
+api.setBypass(false);
+afirmar('Bypass desactivado: ganancia motor a 1', casiIgual(gainMotor.gain.value, 1));
+afirmar('Bypass desactivado: ganancia directo a 0', casiIgual(gainDirect.gain.value, 0));
+
 const verdes = total - fallos;
 console.log('\n' + '─'.repeat(64));
 if (fallos === 0) {

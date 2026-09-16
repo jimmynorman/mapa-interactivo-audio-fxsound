@@ -1,4 +1,4 @@
-# 🎛️ Mapa Interactivo de Audio - Estilo FxSound (v0.2)
+# 🎛️ Mapa Interactivo de Audio - Estilo FxSound (v0.4)
 
 Una consola de audio interactiva premium basada en entornos web, diseñada con una estética **Dark Neumorphism / Studio LED**. El proyecto sirve como una herramienta didáctica y visual de percepción auditiva, permitiendo a los usuarios entender cómo impacta la modificación de frecuencias y efectos en los instrumentos reales y en el confort del oído.
 

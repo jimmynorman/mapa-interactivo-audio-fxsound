@@ -2,6 +2,28 @@
 
 Todos los cambios notables en la Consola de Audio Interactiva se documentarán en este archivo.
 
+## [0.4] - 2026-09-16
+### Añadido
+*   Implementado motor de audio real mediante Web Audio API (Hito 1), transformando la consola de simulación visual en un procesador de audio totalmente funcional.
+*   Cadena de ecualización de 10 filtros Biquad de tipo "Peaking", uno por cada fader del ecualizador (31 Hz a 16.00 kHz), con ganancia ajustable entre -12 dB y +12 dB.
+*   Modelo tonal mediante estanterías de agudos (Claridad) y graves (Refuerzo de Graves) vinculadas directamente a los potenciómetros correspondientes.
+*   Refuerzo Dinámico implementado con compresor dinámico de rango y ganancia de compensación, ambos controlados por el potenciómetro de Refuerzo Dinámico.
+*   Efecto Ambiente mediante convolución con respuesta impulsional sintética (ruido con decaimiento exponencial), mezcla seco/húmedo controlable.
+*   Efecto Sonido Envolvente mediante matriz Mid/Side que permite control continuo de anchura estéreo (mono → estéreo → apertura 3D).
+*   Carga de archivos de audio locales mediante `<input type="file">` y elemento `<audio>` oculto, compatible con formatos MP3, WAV, OGG y otros soportados por el navegador.
+*   Loop de prueba sintetizado incorporado para verificar el ecualizador y efectos sin necesidad de archivos externos, con contenido armónico y de ruido ajustado para energizar todas las bandas del EQ.
+*   Volumen maestro con curva suave y protección contra clipping digital.
+*   Indicadores visuales de estado (LED, visor OLED, botón de reproducción) con retroalimentación en tiempo real.
+*   Transiciones suaves de todos los parámetros mediante `setTargetAtTime` para evitar artefactos de "zipper noise".
+*   Cumplimiento de políticas de autoplay del navegador: el AudioContext se inicializa en el primer gesto de usuario real (clic).
+
+### Corregido
+*   Ninguno (versión basada en la estable v0.3).
+
+### Modificado
+*   `Consola_Audio_0.2.html`: Se ha añadido la barra de transporte en la sección superior (después del encabezado) y se ha ampliado el bloque `<script>` con el motor de audio, el sintetizador de prueba y el controlador de interfaz.
+*   `index.html`: Duplicado exacto de `Consola_Audio_0.2.html` para mantener la compatibilidad con GitHub Pages.
+
 ## [0.3] - 2026-09-15
 ### Añadido
 *   Se generó `index.html` como duplicado exacto de `Consola_Audio_0.2.html` para servir como punto de entrada de GitHub Pages y permitir la demo web en tiempo real.

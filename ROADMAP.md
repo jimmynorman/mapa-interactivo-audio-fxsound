@@ -2,8 +2,8 @@
 
 > **INSTRUCCIÓN PARA LA IA ASISTENTE:** Este documento contiene el estado del arte del proyecto, sus restricciones de diseño, decisiones arquitectónicas previas y el camino de desarrollo de software de audio establecido. Léelo cuidadosamente antes de proponer código para mantener la coherencia absoluta del software.
 
-## 🎯 Estado Actual del Sistema (v0.2)
-El frontend se encuentra en un estado **Visualmente Terminado y Altamente Interactivo**. Los sliders y knobs modifican variables en memoria y actualizan strings descriptivos dentro del DOM en pantallas OLED independientes, simulando de manera exacta el comportamiento lógico de una suite de audio profesional. El archivo base se ha migrado exitosamente de la ruta local de escritorio al repositorio.
+## 🎯 Estado Actual del Sistema (v0.4)
+El frontend ha evolucionado de un estado **Visualmente Terminado y Altamente Interactivo** a un **Procesador de Audio Real Totalmente Funcional**. El sistema ahora implementa el Hito 1 (Motor de Audio Real con Web Audio API), transformando la consola de simulación en un ecualizador y procesador de efectos operable con audio en tiempo real. Los sliders y knobs continúan modificando variables en memoria y actualizando strings descriptivos dentro del DOM en pantallas OLED independientes, pero ahora dichos cambios afectan directamente al grafo de procesamiento de audio subyacente. El archivo base se ha migrado exitosamente de la ruta local de escritorio al repositorio.
 
 ## 🔒 Restricciones de Arquitectura (No Romper)
 1.  **Estándar Vertical Moderno:** Prohibido usar `appearance: slider-vertical` o variantes obsoletas de WebKit. Los elementos verticales del ecualizador y canvas se manejan mediante propiedades nativas CSS como `writing-mode: vertical-lr; direction: rtl;` para consistencia cross-browser.

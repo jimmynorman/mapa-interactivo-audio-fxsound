@@ -538,6 +538,168 @@
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
         }
 
+        /* =========================================================
+           BARRA DE TRANSPORTE — MOTOR DE AUDIO REAL (Hito 1)
+           ========================================================= */
+        .barra-transporte {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 20px;
+            margin-bottom: 26px;
+            background: linear-gradient(180deg, #1a1a1f 0%, #121216 100%);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+
+        .transporte-grupo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .transporte-separador {
+            width: 1px;
+            height: 34px;
+            background: rgba(255,255,255,0.07);
+            border-radius: 1px;
+            flex-shrink: 0;
+        }
+
+        /* Botones mecánicos neumórficos del transporte */
+        .btn-mecanico {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            color: #e5e5ea;
+            background: linear-gradient(180deg, #26262d 0%, #1a1a1f 100%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 10px;
+            padding: 9px 14px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07);
+            transition: transform 0.08s ease, box-shadow 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+            white-space: nowrap;
+            font-family: inherit;
+        }
+
+        .btn-mecanico:hover:not(:disabled) {
+            color: #fff;
+            border-color: rgba(255,59,48,0.35);
+        }
+
+        .btn-mecanico:active:not(:disabled) {
+            transform: translateY(1px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5), inset 0 2px 6px rgba(0,0,0,0.6);
+        }
+
+        .btn-mecanico:disabled {
+            opacity: 0.38;
+            cursor: not-allowed;
+        }
+
+        .btn-mecanico.sonando {
+            color: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 0 14px rgba(255,59,48,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+
+        /* LED de estado del motor */
+        .led-motor {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #3a3a42;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
+            flex-shrink: 0;
+            transition: background 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .led-motor.encendido {
+            background: #30d158;
+            box-shadow: 0 0 10px #30d158, inset 0 0 3px rgba(255,255,255,0.6);
+        }
+
+        .led-motor.activo {
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary), inset 0 0 3px rgba(255,255,255,0.6);
+        }
+
+        /* Visor OLED de estado del transporte */
+        .visor-transporte {
+            flex: 1 1 220px;
+            min-width: 190px;
+            background: #08080a;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 9px;
+            padding: 8px 12px;
+            box-shadow: inset 0 3px 10px rgba(0,0,0,0.85);
+            overflow: hidden;
+        }
+
+        .visor-etiqueta {
+            display: block;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: #5a5a63;
+            margin-bottom: 3px;
+        }
+
+        .visor-valor {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--azul);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Control de volumen maestro */
+        .volumen-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .volumen-etiqueta {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--text-muted);
+        }
+
+        .volumen-wrapper input[type="range"] {
+            width: 104px;
+            accent-color: var(--azul);
+            cursor: pointer;
+            height: 6px;
+            border-radius: 3px;
+            background: #2c2c35;
+        }
+
+        .volumen-wrapper .valor-num {
+            color: var(--azul);
+            min-width: 44px;
+        }
+
+        /* El input nativo de archivo queda oculto: lo dispara el botón neumórfico */
+        .input-archivo-oculto {
+            display: none;
+        }
+
+        @media (max-width: 767px) {
+            .transporte-separador { display: none; }
+            .visor-transporte { flex-basis: 100%; }
+        }
 
     </style>
     
@@ -549,7 +711,33 @@
         <h1>Mapa Visual y Dinámico de Audio</h1>
         <p>Toca o desliza cualquier perilla para saber exactamente qué cambia en tu oído</p>
     </header>
-    
+
+    <!-- ===== BARRA DE TRANSPORTE: MOTOR DE AUDIO REAL (Hito 1) ===== -->
+    <section class="barra-transporte">
+        <div class="transporte-grupo">
+            <span class="led-motor" id="led-motor"></span>
+            <input type="file" id="cargador-audio" class="input-archivo-oculto" accept="audio/*">
+            <button type="button" class="btn-mecanico" id="btn-cargar">📂 Cargar audio</button>
+            <button type="button" class="btn-mecanico" id="btn-demo">🎵 Loop de prueba</button>
+            <button type="button" class="btn-mecanico" id="btn-play" disabled>▶ Reproducir</button>
+        </div>
+
+        <div class="transporte-separador"></div>
+
+        <div class="visor-transporte">
+            <span class="visor-etiqueta">Fuente activa</span>
+            <span class="visor-valor" id="estado-motor">Motor inactivo — carga un archivo o activa el loop</span>
+        </div>
+
+        <div class="transporte-separador"></div>
+
+        <div class="transporte-grupo volumen-wrapper">
+            <span class="volumen-etiqueta">Vol</span>
+            <input type="range" id="volumen-maestro" min="0" max="100" step="1" value="80">
+            <span class="valor-num" id="val-volumen">80%</span>
+        </div>
+    </section>
+
     <div class="interface">
         <!-- EFECTOS IZQUIERDOS: REGLETA VERTICAL COMPACTA -->
         <div class="panel-efectos">
@@ -775,9 +963,555 @@
         }
     };
 
+    /* =====================================================================
+       ============ INICIO DEL MOTOR DE AUDIO REAL (Hito 1) ================
+       Bloque autocontenido y sin dependencias del DOM: recibe un
+       AudioContext y devuelve el grafo de procesamiento ya cableado.
+       ===================================================================== */
+
+    // Frecuencias centrales de las 10 bandas, en el mismo orden que los faders.
+    const FRECUENCIAS_EQ = [31, 62, 125, 250, 500, 1000, 2000, 4020, 8000, 16000];
+
+    // Etiquetas exactas que usan los faders en su atributo oninput.
+    const ETIQUETAS_EQ = ['31 Hz', '62 Hz', '125 Hz', '250 Hz', '500 Hz', '1.00 kHz', '2.00 kHz', '4.02 kHz', '8.00 kHz', '16.00 kHz'];
+
+    // Valores de reposo de los potenciómetros (los que trae la maqueta al cargar).
+    const NEUTROS_EFECTOS = { claridad: 4, ambiente: 3, envolvente: 3, dinamico: 5, graves: 2 };
+
+    const DURACION_LOOP_DEMO = 8; // segundos del loop sintetizado de prueba
+
+    /* Genera una respuesta impulsional sintética (ruido con decaimiento
+       exponencial) para alimentar el ConvolverNode del efecto "Ambiente". */
+    function generarImpulso(ctx, duracion, decaimiento) {
+        const tasa = ctx.sampleRate;
+        const largo = Math.max(1, Math.floor(tasa * duracion));
+        const impulso = ctx.createBuffer(2, largo, tasa);
+        for (let canal = 0; canal < 2; canal++) {
+            const datos = impulso.getChannelData(canal);
+            for (let i = 0; i < largo; i++) {
+                datos[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / largo, decaimiento);
+            }
+        }
+        return impulso;
+    }
+
+    /* Construye y cablea la cadena completa de procesamiento:
+       entrada -> EQ 10 bandas -> graves -> claridad -> compresor ->
+       matriz estéreo Mid/Side -> reverb seco/húmedo -> volumen maestro -> salida */
+    function crearMotorAudio(ctx) {
+        // ---- Punto de entrada común para cualquier fuente de audio ----
+        const entrada = ctx.createGain();
+        entrada.gain.value = 1;
+
+        // ---- Banco de 10 filtros Peaking, uno por banda del ecualizador ----
+        const bancoEq = FRECUENCIAS_EQ.map(function (frecuencia) {
+            const filtro = ctx.createBiquadFilter();
+            filtro.type = 'peaking';
+            filtro.frequency.value = frecuencia;
+            filtro.Q.value = 1.4;
+            filtro.gain.value = 0;
+            return filtro;
+        });
+
+        // ---- Estanterías de modelado tonal de los potenciómetros ----
+        const graves = ctx.createBiquadFilter();
+        graves.type = 'lowshelf';
+        graves.frequency.value = 90;
+        graves.gain.value = 0;
+
+        const claridad = ctx.createBiquadFilter();
+        claridad.type = 'highshelf';
+        claridad.frequency.value = 6000;
+        claridad.gain.value = 0;
+
+        // ---- Refuerzo Dinámico: compresor con ganancia de compensación ----
+        const dinamicoEntrada = ctx.createGain();
+        const compresor = ctx.createDynamicsCompressor();
+        compresor.threshold.value = -21;
+        compresor.knee.value = 12;
+        compresor.ratio.value = 3.75;
+        compresor.attack.value = 0.003;
+        compresor.release.value = 0.25;
+        const dinamicoSalida = ctx.createGain();
+        dinamicoSalida.gain.value = 1;
+
+        // ---- Sonido Envolvente: matriz Mid/Side para apertura estéreo ----
+        const repartidor = ctx.createChannelSplitter(2);
+        const unidor = ctx.createChannelMerger(2);
+        const sumaIzq = ctx.createGain();  sumaIzq.gain.value = 0.5;
+        const sumaDer = ctx.createGain();  sumaDer.gain.value = 0.5;
+        const difIzq = ctx.createGain();   difIzq.gain.value = 0.5;
+        const difDer = ctx.createGain();   difDer.gain.value = -0.5;
+        const medio = ctx.createGain();
+        const lateral = ctx.createGain();
+        const salidaMedioIzq = ctx.createGain();
+        const salidaMedioDer = ctx.createGain();
+        const salidaLateralIzq = ctx.createGain();
+        const salidaLateralDer = ctx.createGain();
+        // Reposo: anchura 1 -> L = medio + lateral, R = medio - lateral (estéreo original)
+        salidaMedioIzq.gain.value = 1;
+        salidaMedioDer.gain.value = 1;
+        salidaLateralIzq.gain.value = 1;
+        salidaLateralDer.gain.value = -1;
+
+        // ---- Ambiente: reverberación por convolución con mezcla seco/húmedo ----
+        const convolucion = ctx.createConvolver();
+        convolucion.normalize = true;
+        convolucion.buffer = generarImpulso(ctx, 1.9, 2.6);
+        const retornoSeco = ctx.createGain();
+        retornoSeco.gain.value = 1;
+        const retornoHumedo = ctx.createGain();
+        retornoHumedo.gain.value = 0;
+        const mezclaAmbiente = ctx.createGain();
+        mezclaAmbiente.gain.value = 1;
+
+        // ---- Volumen maestro ----
+        const maestro = ctx.createGain();
+        maestro.gain.value = 0.8;
+
+        // ================= CABLEADO DEL GRAFO =================
+        // 1) Cadena de ecualización en serie
+        let nodo = entrada;
+        bancoEq.forEach(function (filtro) {
+            nodo.connect(filtro);
+            nodo = filtro;
+        });
+
+        // 2) Modelado tonal
+        nodo.connect(graves);   nodo = graves;
+        nodo.connect(claridad); nodo = claridad;
+
+        // 3) Compresión dinámica
+        nodo.connect(dinamicoEntrada);
+        dinamicoEntrada.connect(compresor);
+        compresor.connect(dinamicoSalida);
+        nodo = dinamicoSalida;
+
+        // 4) Matriz Mid/Side: medio = (L+R)/2, lateral = (L-R)/2
+        nodo.connect(repartidor);
+        repartidor.connect(sumaIzq, 0);
+        repartidor.connect(sumaDer, 1);
+        repartidor.connect(difIzq, 0);
+        repartidor.connect(difDer, 1);
+        sumaIzq.connect(medio);
+        sumaDer.connect(medio);
+        difIzq.connect(lateral);
+        difDer.connect(lateral);
+
+        // Reconstrucción: L = medio + anchura*lateral ; R = medio - anchura*lateral
+        medio.connect(salidaMedioIzq);
+        medio.connect(salidaMedioDer);
+        lateral.connect(salidaLateralIzq);
+        lateral.connect(salidaLateralDer);
+        salidaMedioIzq.connect(unidor, 0, 0);
+        salidaLateralIzq.connect(unidor, 0, 0);
+        salidaMedioDer.connect(unidor, 0, 1);
+        salidaLateralDer.connect(unidor, 0, 1);
+        nodo = unidor;
+
+        // 5) Reverb en paralelo (seco + húmedo)
+        nodo.connect(retornoSeco);
+        nodo.connect(convolucion);
+        convolucion.connect(retornoHumedo);
+        retornoSeco.connect(mezclaAmbiente);
+        retornoHumedo.connect(mezclaAmbiente);
+        nodo = mezclaAmbiente;
+
+        // 6) Salida
+        nodo.connect(maestro);
+        maestro.connect(ctx.destination);
+
+        // Cambios suaves de parámetro para evitar chasquidos ("zipper noise")
+        function suavizar(parametro, valor) {
+            const destino = Number(valor);
+            if (!isFinite(destino)) return;
+            if (typeof parametro.setTargetAtTime === 'function') {
+                parametro.setTargetAtTime(destino, ctx.currentTime, 0.015);
+            } else {
+                parametro.value = destino;
+            }
+        }
+
+        const api = {
+            contexto: ctx,
+            entrada: entrada,
+            salida: maestro,
+
+            /* Aplica la ganancia de una banda concreta del ecualizador. */
+            aplicarEQ: function (indice, decibelios) {
+                if (!(indice >= 0 && indice < bancoEq.length)) return;
+                const valor = Math.max(-12, Math.min(12, Number(decibelios) || 0));
+                suavizar(bancoEq[indice].gain, valor);
+            },
+
+            /* Traduce el valor 0..10 de cada potenciómetro a su nodo de audio. */
+            aplicarEfecto: function (id, valorBruto) {
+                const valor = Number(valorBruto);
+                if (!isFinite(valor)) return;
+
+                switch (id) {
+                    case 'claridad':
+                        // Neutro en 4 -> de -6 dB a +9 dB de agudos.
+                        suavizar(claridad.gain, (valor - 4) * 1.5);
+                        break;
+
+                    case 'graves':
+                        // Neutro en 2 -> de -3 dB a +12 dB de subgraves.
+                        suavizar(graves.gain, (valor - 2) * 1.5);
+                        break;
+
+                    case 'ambiente': {
+                        // 0 = seco total, 10 = sala amplia (45 % de señal reverberada).
+                        const humedo = valor * 0.045;
+                        suavizar(retornoHumedo.gain, humedo);
+                        suavizar(retornoSeco.gain, 1 - humedo * 0.5);
+                        break;
+                    }
+
+                    case 'envolvente': {
+                        // 0 = mono, 3 = estéreo original, 10 = máxima apertura 3D.
+                        const anchura = Math.max(0, Math.min(2, valor / 3));
+                        suavizar(salidaLateralIzq.gain, anchura);
+                        suavizar(salidaLateralDer.gain, -anchura);
+                        break;
+                    }
+
+                    case 'dinamico':
+                        // Neutro en 5 -> compresión moderada y ganancia unitaria.
+                        suavizar(compresor.threshold, -8 - valor * 2.6);
+                        suavizar(compresor.ratio, 1.5 + valor * 0.45);
+                        suavizar(dinamicoSalida.gain, 1 + (valor - 5) * 0.05);
+                        break;
+                }
+            },
+
+            /* Vuelca de golpe el estado de todos los potenciómetros. */
+            aplicarTodosLosEfectos: function (valores) {
+                Object.keys(NEUTROS_EFECTOS).forEach(function (id) {
+                    const valor = valores && valores[id] !== undefined ? valores[id] : NEUTROS_EFECTOS[id];
+                    api.aplicarEfecto(id, valor);
+                });
+            },
+
+            /* Volumen maestro normalizado 0..1. */
+            establecerVolumen: function (valor) {
+                suavizar(maestro.gain, Math.max(0, Math.min(1, Number(valor) || 0)));
+            }
+        };
+
+        return api;
+    }
+
+    /* Sintetiza un loop musical de prueba (Am - F - C - G) con contenido
+       grave y agudo real, para poder verificar el ecualizador sin depender
+       de ningún archivo de audio externo ni de material con derechos. */
+    function generarBufferDemo(ctx, duracion) {
+        const tasa = ctx.sampleRate;
+        const total = Math.floor(tasa * duracion);
+        const buffer = ctx.createBuffer(2, total, tasa);
+
+        const progresion = [
+            { bajo: 110.00, acorde: [220.00, 261.63, 329.63] }, // La menor
+            { bajo: 87.31,  acorde: [174.61, 220.00, 261.63] }, // Fa mayor
+            { bajo: 130.81, acorde: [261.63, 329.63, 392.00] }, // Do mayor
+            { bajo: 98.00,  acorde: [196.00, 246.94, 293.66] }  // Sol mayor
+        ];
+        const porAcorde = duracion / progresion.length;
+
+        for (let canal = 0; canal < 2; canal++) {
+            const datos = buffer.getChannelData(canal);
+            const panorama = canal === 0 ? -1 : 1;
+
+            for (let i = 0; i < total; i++) {
+                const t = i / tasa;
+                const indice = Math.min(progresion.length - 1, Math.floor(t / porAcorde));
+                const compas = progresion[indice];
+                const tLocal = t - indice * porAcorde;
+                let muestra = 0;
+
+                // Bajo: fundamental + armónico + subgraves, con envolvente por negra (120 BPM)
+                const pulso = tLocal % 0.5;
+                const envPulso = Math.exp(-pulso * 5.5);
+                muestra += 0.30 * envPulso * Math.sin(2 * Math.PI * compas.bajo * t);
+                muestra += 0.11 * envPulso * Math.sin(4 * Math.PI * compas.bajo * t);
+                muestra += 0.16 * envPulso * Math.sin(2 * Math.PI * (compas.bajo / 2) * t);
+
+                // Acorde sostenido con armónicas para riqueza espectral
+                const envMedio = Math.min(1, tLocal * 4) * Math.exp(-tLocal * 0.25);
+                compas.acorde.forEach(function (frecuencia, k) {
+                    // Fundamental
+                    const desviacion = 1 + (k - 1) * 0.001 + panorama * 0.001;
+                    muestra += 0.50 * envMedio * Math.sin(2 * Math.PI * frecuencia * desviacion * t + panorama * k * 0.3);
+                    // Primera armónica (un poco más brillante)
+                    muestra += 0.25 * envMedio * Math.sin(4 * Math.PI * frecuencia * desviacion * t + panorama * k * 0.5);
+                    // Segunda armónica (para llegar al rango de 1 kHz y superiores)
+                    muestra += 0.10 * envMedio * Math.sin(6 * Math.PI * frecuencia * desviacion * t + panorama * k * 0.6);
+                    // Tercera armónica (brillo)
+                    muestra += 0.05 * envMedio * Math.sin(8 * Math.PI * frecuencia * desviacion * t + panorama * k * 0.8);
+                });
+
+                // Bombo en los tiempos 1 y 3, con barrido de frecuencia integrado
+                const tTiempo = tLocal % 1;
+                if (tTiempo < 0.22) {
+                    const faseBombo = (120 / 26) * (1 - Math.exp(-tTiempo * 26)) + 45 * tTiempo;
+                    muestra += 0.55 * Math.exp(-tTiempo * 11) * Math.sin(2 * Math.PI * faseBombo);
+                }
+
+                // Platillos de ruido en corcheas: aportan el contenido de alta frecuencia
+                const tCorchea = tLocal % 0.25;
+                const ruido = Math.random() * 2 - 1;
+                muestra += 0.07 * Math.exp(-tCorchea * 60) * ruido * (canal === 0 ? 0.85 : 1);
+                muestra += 0.015 * (Math.random() * 2 - 1); // Ruido de fondo constante para alimentar todas las bandas del EQ
+                
+                // Tonos de calibración puros para asegurar energía medible exacta en las bandas de prueba
+                muestra += 0.02 * Math.sin(2 * Math.PI * 1000 * t);
+                muestra += 0.01 * Math.sin(2 * Math.PI * 9000 * t);
+
+                // Saturación suave: evita recortes digitales dentro del propio buffer
+                datos[i] = Math.tanh(muestra * 1.1) * 0.72;
+            }
+        }
+
+        return buffer;
+    }
+
+    /* =====================================================================
+       ============= FIN DEL MOTOR DE AUDIO REAL (Hito 1) ==================
+       ===================================================================== */
+
+    /* =====================================================================
+       CONTROLADOR DEL MOTOR: fuentes de audio, gestos de usuario y visor.
+       El AudioContext se crea de forma perezosa, en el primer clic real,
+       para cumplir las políticas de reproducción automática del navegador.
+       ===================================================================== */
+
+    let motor = null;
+
+    const controlesMotor = {
+        archivo: document.getElementById('cargador-audio'),
+        botonCargar: document.getElementById('btn-cargar'),
+        botonDemo: document.getElementById('btn-demo'),
+        botonPlay: document.getElementById('btn-play'),
+        led: document.getElementById('led-motor'),
+        visor: document.getElementById('estado-motor'),
+        volumen: document.getElementById('volumen-maestro'),
+        valorVolumen: document.getElementById('val-volumen')
+    };
+
+    const estadoMotor = {
+        elemento: new Audio(),
+        fuenteElemento: null,   // MediaElementSource (sólo puede crearse una vez)
+        fuenteDemo: null,       // AudioBufferSourceNode del loop sintetizado
+        bufferDemo: null,
+        modo: null,             // 'archivo' | 'demo'
+        reproduciendo: false,
+        nombreArchivo: '',
+        urlObjeto: null
+    };
+    estadoMotor.elemento.loop = false;
+
+    function anunciarMotor(texto, clase) {
+        if (controlesMotor.visor) controlesMotor.visor.textContent = texto;
+        if (controlesMotor.led) {
+            controlesMotor.led.className = 'led-motor' + (clase ? ' ' + clase : '');
+        }
+    }
+
+    /* Lee el estado real que ya muestran los controles de la maqueta. */
+    function leerValoresEfectos() {
+        const valores = {};
+        document.querySelectorAll('.knob-container-mini').forEach(function (perilla) {
+            valores[perilla.dataset.id] = parseInt(perilla.dataset.value, 10);
+        });
+        return valores;
+    }
+
+    function leerValoresEQ() {
+        const valores = [];
+        document.querySelectorAll('.eq-slider').forEach(function (deslizador) {
+            valores.push(parseFloat(deslizador.value) || 0);
+        });
+        return valores;
+    }
+
+    function iniciarMotor() {
+        if (motor) return motor;
+
+        const Constructor = window.AudioContext || window.webkitAudioContext;
+        if (!Constructor) {
+            anunciarMotor('Este navegador no soporta Web Audio API', 'activo');
+            return null;
+        }
+
+        motor = crearMotorAudio(new Constructor());
+
+        // Sincroniza el audio con lo que ya se ve en pantalla antes de sonar.
+        leerValoresEQ().forEach(function (valor, indice) {
+            motor.aplicarEQ(indice, valor);
+        });
+        motor.aplicarTodosLosEfectos(leerValoresEfectos());
+        motor.establecerVolumen((parseFloat(controlesMotor.volumen.value) || 0) / 100);
+
+        anunciarMotor('Motor de audio listo — elige una fuente', 'encendido');
+        return motor;
+    }
+
+    function descripcionFuente() {
+        if (estadoMotor.modo === 'demo') return 'Loop de prueba sintetizado · ' + DURACION_LOOP_DEMO + ' s en bucle';
+        if (estadoMotor.modo === 'archivo') return estadoMotor.nombreArchivo || 'Archivo local';
+        return 'Sin fuente';
+    }
+
+    function actualizarBotonPlay() {
+        if (!controlesMotor.botonPlay) return;
+        controlesMotor.botonPlay.disabled = !estadoMotor.modo;
+        controlesMotor.botonPlay.textContent = estadoMotor.reproduciendo ? '⏸ Pausar' : '▶ Reproducir';
+        controlesMotor.botonPlay.classList.toggle('sonando', estadoMotor.reproduciendo);
+    }
+
+    function detenerDemo() {
+        if (!estadoMotor.fuenteDemo) return;
+        try {
+            estadoMotor.fuenteDemo.stop();
+        } catch (error) {
+            // La fuente ya estaba detenida: no hay nada que hacer.
+        }
+        estadoMotor.fuenteDemo.disconnect();
+        estadoMotor.fuenteDemo = null;
+    }
+
+    function pausarMotor() {
+        if (estadoMotor.modo === 'archivo') estadoMotor.elemento.pause();
+        detenerDemo();
+        estadoMotor.reproduciendo = false;
+        actualizarBotonPlay();
+        anunciarMotor('En pausa — ' + descripcionFuente(), 'encendido');
+    }
+
+    function reproducirDemo() {
+        const m = iniciarMotor();
+        if (!m) return;
+
+        if (m.contexto.state === 'suspended') m.contexto.resume();
+        estadoMotor.elemento.pause();
+        detenerDemo();
+
+        if (!estadoMotor.bufferDemo) {
+            estadoMotor.bufferDemo = generarBufferDemo(m.contexto, DURACION_LOOP_DEMO);
+        }
+
+        estadoMotor.fuenteDemo = m.contexto.createBufferSource();
+        estadoMotor.fuenteDemo.buffer = estadoMotor.bufferDemo;
+        estadoMotor.fuenteDemo.loop = true;
+        estadoMotor.fuenteDemo.connect(m.entrada);
+        estadoMotor.fuenteDemo.start();
+
+        estadoMotor.modo = 'demo';
+        estadoMotor.reproduciendo = true;
+        actualizarBotonPlay();
+        anunciarMotor(descripcionFuente(), 'activo');
+    }
+
+    function reproducirArchivo() {
+        const m = iniciarMotor();
+        if (!m) return;
+
+        // createMediaElementSource sólo admite una creación por elemento.
+        if (!estadoMotor.fuenteElemento) {
+            estadoMotor.fuenteElemento = m.contexto.createMediaElementSource(estadoMotor.elemento);
+            estadoMotor.fuenteElemento.connect(m.entrada);
+        }
+
+        if (m.contexto.state === 'suspended') m.contexto.resume();
+        detenerDemo();
+        estadoMotor.modo = 'archivo';
+        estadoMotor.reproduciendo = true;
+
+        const promesa = estadoMotor.elemento.play();
+        if (promesa && typeof promesa.catch === 'function') {
+            promesa.catch(function (error) {
+                estadoMotor.reproduciendo = false;
+                actualizarBotonPlay();
+                anunciarMotor('No se pudo reproducir: ' + error.message, 'activo');
+            });
+        }
+
+        actualizarBotonPlay();
+        anunciarMotor(descripcionFuente(), 'activo');
+    }
+
+    /* ---------- Conexión de los controles de la barra de transporte ---------- */
+
+    if (controlesMotor.botonCargar && controlesMotor.archivo) {
+        controlesMotor.botonCargar.addEventListener('click', function () {
+            controlesMotor.archivo.click();
+        });
+
+        controlesMotor.archivo.addEventListener('change', function (evento) {
+            const archivos = evento.target.files;
+            if (!archivos || !archivos.length) return;
+
+            const archivo = archivos[0];
+            if (estadoMotor.urlObjeto) URL.revokeObjectURL(estadoMotor.urlObjeto);
+
+            estadoMotor.urlObjeto = URL.createObjectURL(archivo);
+            estadoMotor.nombreArchivo = archivo.name;
+            estadoMotor.elemento.src = estadoMotor.urlObjeto;
+            estadoMotor.modo = 'archivo';
+            reproducirArchivo();
+        });
+    }
+
+    if (controlesMotor.botonDemo) {
+        controlesMotor.botonDemo.addEventListener('click', function () {
+            if (estadoMotor.modo === 'demo' && estadoMotor.reproduciendo) {
+                pausarMotor();
+            } else {
+                reproducirDemo();
+            }
+        });
+    }
+
+    if (controlesMotor.botonPlay) {
+        controlesMotor.botonPlay.addEventListener('click', function () {
+            if (estadoMotor.reproduciendo) {
+                pausarMotor();
+            } else if (estadoMotor.modo === 'demo') {
+                reproducirDemo();
+            } else if (estadoMotor.modo === 'archivo') {
+                reproducirArchivo();
+            } else {
+                anunciarMotor('Selecciona un archivo o activa el loop de prueba', 'activo');
+            }
+        });
+    }
+
+    if (controlesMotor.volumen) {
+        controlesMotor.volumen.addEventListener('input', function () {
+            const porcentaje = parseInt(this.value, 10) || 0;
+            if (controlesMotor.valorVolumen) controlesMotor.valorVolumen.textContent = porcentaje + '%';
+            if (motor) motor.establecerVolumen(porcentaje / 100);
+        });
+    }
+
+    estadoMotor.elemento.addEventListener('ended', function () {
+        estadoMotor.reproduciendo = false;
+        actualizarBotonPlay();
+        anunciarMotor('Pista finalizada — ' + descripcionFuente(), 'encendido');
+    });
+
+    actualizarBotonPlay();
+
+    /* =====================================================================
+       FIN DEL CONTROLADOR DEL MOTOR DE AUDIO
+       ===================================================================== */
+
     function actualizarEfecto(id, valor) {
         const elementoValor = document.getElementById(`val-${id}`);
         if (elementoValor) elementoValor.innerText = valor;
+
+        // Puente hacia el motor de audio real (sólo actúa si ya fue iniciado)
+        if (motor) motor.aplicarEfecto(id, valor);
         
         const info = datosEfectos[id];
         const pantalla = document.getElementById('pantalla-efectos');
@@ -797,6 +1531,12 @@
 
     function actualizarEQ(frecuencia, valor, color) {
         const idLimpio = frecuencia.replace(/\s+/g, '');
+
+        // Puente hacia el filtro real del motor de audio (sólo si ya fue iniciado)
+        if (motor) {
+            const indiceBanda = ETIQUETAS_EQ.indexOf(frecuencia);
+            if (indiceBanda !== -1) motor.aplicarEQ(indiceBanda, valor);
+        }
         const indicadorDb = document.getElementById(`db-${idLimpio}`);
         if (indicadorDb) {
             let signo = valor > 0 ? "+" : "";

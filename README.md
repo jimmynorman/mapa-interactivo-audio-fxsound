@@ -2,6 +2,7 @@
 
 ![Referencia Principal](assets/referencia_principal.png)
 
+Una consola de audio interactiva premium basada en entornos web, diseñada con una estética **Dark Neumorphism / Studio LED**. El proyecto sirve como una herramienta didáctica y visual de percepción auditiva, permitiendo a los usuarios entender cómo impacta la modificación de frecuencias y efectos en los instrumentos reales y en el confort del oído.
 ![Referencia de pantalla principal](assets/pantalla_principal.png)
 
 Una consola de audio interactiva premium basada en entornos web, diseñada con una estética **Dark Neumorphism / Studio LED**. El proyecto sirve como una herramienta didáctica y visual de percepción auditiva, permitiendo a los usuarios entender cómo impacta la modificación de frecuencias y efectos en los instrumentos reales y en el confort del oído.

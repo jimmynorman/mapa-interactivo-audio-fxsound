@@ -1,5 +1,7 @@
 # 📘 Wiki de Usuario: Consola de Audio FxSound
 
+![Referencia Principal](assets/referencia_principal.png)
+
 Bienvenido a la guía completa de tu consola de audio interactiva. Aquí aprenderás a sacar el máximo provecho a cada potenciómetro y fader.
 
 ## 🎛️ Descripción General
